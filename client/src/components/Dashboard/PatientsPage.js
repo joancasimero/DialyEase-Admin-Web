@@ -17,7 +17,6 @@ const PatientsPage = () => {
   const { isSuperAdmin } = useAuth();
   const [patients, setPatients] = useState([]);
   const [archivedPatients, setArchivedPatients] = useState([]); 
-  const [showArchived, setShowArchived] = useState(false); 
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [patientsPerPage] = useState(20);
@@ -175,11 +174,15 @@ const PatientsPage = () => {
     }
   };
 
+  // Unused function - kept for potential future use
+  // eslint-disable-next-line no-unused-vars
   const handleDeleteClick = (id) => {
     setDeletePatientId(id);
     setShowDeleteModal(true);
   };
 
+  // Unused function - kept for potential future use
+  // eslint-disable-next-line no-unused-vars
   const confirmDelete = async () => {
     try {
       await api.delete(

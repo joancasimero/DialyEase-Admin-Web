@@ -3,7 +3,7 @@ import { Container, Row, Col, Alert, Table, Badge, Spinner, Button, Modal } from
 import { useNavigate } from 'react-router-dom';
 import authService from '../../services/authService';
 import api from '../../services/api';
-import { FiCalendar, FiUser, FiClock, FiSettings, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
+import { FiCalendar, FiUser, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
 import moment from 'moment-timezone';
 
 
@@ -22,7 +22,6 @@ const Dashboard = () => {
   const [selectedPatientId, setSelectedPatientId] = useState(null);
   const [selectedPatientName, setSelectedPatientName] = useState('');
   const [showCancelCheckInModal, setShowCancelCheckInModal] = useState(false);
-  const [cancelPatientId, setCancelPatientId] = useState(null);
   const [cancelPatientName, setCancelPatientName] = useState('');
   const [cancelAttendanceId, setCancelAttendanceId] = useState(null);
 
@@ -246,7 +245,6 @@ const Dashboard = () => {
     return recommendations;
   };
 
-  const appointmentCounts = getAppointmentCounts();
   const overallPatientCounts = getOverallPatientCounts();
   const assignmentRecommendations = getAssignmentRecommendations();
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import api from "../../services/api";
 import {
   Table,
@@ -9,8 +9,6 @@ import {
   Spinner,
   Row,
   Col,
-  Container,
-  Card,
   Alert,
   Dropdown,
 } from "react-bootstrap";
@@ -29,9 +27,9 @@ const NursesPage = () => {
 
   useEffect(() => {
     fetchNurses();
-  }, [showArchived]);
+  }, [fetchNurses]);
 
-  const fetchNurses = async () => {
+  const fetchNurses = useCallback(async () => {
     try {
       const endpoint = showArchived 
         ? '/nurses/archived'
@@ -54,7 +52,7 @@ const NursesPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showArchived]);
 
   const handleArchiveNurse = async (id) => {
     if (window.confirm('Are you sure you want to archive this nurse?')) {

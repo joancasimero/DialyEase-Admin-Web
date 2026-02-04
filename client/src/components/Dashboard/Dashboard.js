@@ -52,6 +52,7 @@ const Dashboard = () => {
     }
   }, []);
 
+  // eslint-disable-next-line no-unused-vars
   const getPhilippineDate = () => {
     return moment().tz('Asia/Manila');
   };

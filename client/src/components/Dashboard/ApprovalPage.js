@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import api from '../../services/api';
 import { Button, Table, Spinner, Alert } from 'react-bootstrap';
 
@@ -10,9 +10,11 @@ const ApprovalPage = () => {
   const [actionLoading, setActionLoading] = useState('');
   const [error, setError] = useState('');
 
-  const admin = JSON.parse(localStorage.getItem('admin'));
-  const token = admin?.token;
-  const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
+  const authHeader = useMemo(() => {
+    const admin = JSON.parse(localStorage.getItem('admin'));
+    const token = admin?.token;
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  }, []);
 
   const fetchPending = useCallback(async () => {
     setLoading(true);

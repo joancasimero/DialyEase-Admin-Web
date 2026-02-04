@@ -6,6 +6,12 @@ import { FiClock, FiCalendar } from 'react-icons/fi';
 import api from '../../services/api';
 import moment from 'moment-timezone'; // Add this import
 
+// Helper to get Philippine date string using moment-timezone
+function getPhilippineDateStr(dateObj) {
+  // Use moment-timezone for consistent Asia/Manila date
+  return moment(dateObj).tz('Asia/Manila').format('YYYY-MM-DD');
+}
+
 const AppointmentSlotTracker = ({ authToken }) => {
   // Reason dropdown for deny
   const [showDenyModal, setShowDenyModal] = useState(false);

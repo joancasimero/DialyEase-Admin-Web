@@ -14,6 +14,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [warning, setWarning] = useState('');
   const [loading, setLoading] = useState(false);
+  const [failedAttempts, setFailedAttempts] = useState(0);
   const [lockout, setLockout] = useState(false);
   const [timer, setTimer] = useState(300);
 

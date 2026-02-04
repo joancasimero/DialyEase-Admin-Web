@@ -22,6 +22,7 @@ const Dashboard = () => {
   const [selectedPatientId, setSelectedPatientId] = useState(null);
   const [selectedPatientName, setSelectedPatientName] = useState('');
   const [showCancelCheckInModal, setShowCancelCheckInModal] = useState(false);
+  const [cancelPatientId, setCancelPatientId] = useState(null);
   const [cancelPatientName, setCancelPatientName] = useState('');
   const [cancelAttendanceId, setCancelAttendanceId] = useState(null);
 

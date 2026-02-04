@@ -16,7 +16,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 const PatientsPage = () => {
   const { isSuperAdmin } = useAuth();
   const [patients, setPatients] = useState([]);
-  const [archivedPatients, setArchivedPatients] = useState([]); 
+  const [archivedPatients, setArchivedPatients] = useState([]);
+  const [showArchived, setShowArchived] = useState(false); 
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [patientsPerPage] = useState(20);

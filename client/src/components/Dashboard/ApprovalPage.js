@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import api from '../../services/api';
-import { Button, Table, Badge, Spinner, Alert } from 'react-bootstrap';
-import { FaCheckSquare, FaTrashAlt, FaUserCheck } from 'react-icons/fa';
+import { Button, Table, Spinner, Alert } from 'react-bootstrap';
+
 
 const ApprovalPage = () => {
   const [pendingPatients, setPendingPatients] = useState([]);
@@ -15,13 +15,10 @@ const ApprovalPage = () => {
   const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
 
   useEffect(() => {
-    console.log('Admin from localStorage:', admin);
-    console.log('Token:', token);
-    console.log('Auth header:', authHeader);
     fetchPending();
-  }, []);
+  }, [fetchPending]);
 
-  const fetchPending = async () => {
+  const fetchPending = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
@@ -65,7 +62,7 @@ const ApprovalPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [authHeader]);
 
   const approve = async (type, id) => {
     setActionLoading(`${type}-${id}-approve`);

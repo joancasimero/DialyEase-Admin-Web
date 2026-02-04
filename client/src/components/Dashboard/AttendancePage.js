@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Container, Card, Table, Badge, Row, Col, Button, Form, Alert } from 'react-bootstrap';
-import { FiUser, FiCalendar, FiCheckCircle, FiUserX, FiSearch, FiRefreshCw } from 'react-icons/fi';
+import { FiRefreshCw } from 'react-icons/fi';
 import api from '../../services/api';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -20,7 +20,7 @@ const AttendancePage = () => {
 
   useEffect(() => {
     fetchAttendance();
-  }, [selectedDate, statusFilter]);
+  }, [fetchAttendance]);
 
   const getAuthHeader = () => {
     const admin = JSON.parse(localStorage.getItem('admin'));
@@ -28,7 +28,7 @@ const AttendancePage = () => {
     return { Authorization: `Bearer ${token}` };
   };
 
-  const fetchAttendance = async () => {
+  const fetchAttendance = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
@@ -48,7 +48,7 @@ const AttendancePage = () => {
       setError('Failed to fetch attendance records');
     }
     setLoading(false);
-  };
+  }, [selectedDate, statusFilter]);
 
   const handleExportPDF = async () => {
     setExportError('');

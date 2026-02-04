@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { Card, Row, Col, Badge, Button, Alert, Spinner, Modal, Table } from 'react-bootstrap';
+import { Card, Badge, Button, Alert, Spinner, Modal, Table } from 'react-bootstrap';
 import { FiClock, FiCalendar } from 'react-icons/fi';
 import api from '../../services/api';
 import moment from 'moment-timezone'; // Add this import
@@ -198,7 +198,6 @@ const AppointmentSlotTracker = ({ authToken }) => {
 
   useEffect(() => {
     if (authToken) {
-      const dateStr = getPhilippineDateStr(selectedDate);
       fetchSlotData(selectedDate);
       fetchRescheduleRequests();
     }
@@ -224,6 +223,8 @@ const AppointmentSlotTracker = ({ authToken }) => {
     return 'Booked';
   };
 
+  // Unused function - kept for potential future use
+  // eslint-disable-next-line no-unused-vars
   const showSlotDetails = (timeSlot) => {
     setSelectedTimeSlot(timeSlot);
     setShowDetailModal(true);
@@ -1439,6 +1440,8 @@ const AppointmentSlotTracker = ({ authToken }) => {
   );
 };
 
+// Unused function - kept for potential future use
+// eslint-disable-next-line no-unused-vars
 function getNextDialysisDate(schedule, timeSlot) {
   const scheduledWeekdays = schedule === 'MWF'
     ? [1, 3, 5] // Mon, Wed, Fri

@@ -14,10 +14,6 @@ const ApprovalPage = () => {
   const token = admin?.token;
   const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
 
-  useEffect(() => {
-    fetchPending();
-  }, [fetchPending]);
-
   const fetchPending = useCallback(async () => {
     setLoading(true);
     setError('');
@@ -63,6 +59,10 @@ const ApprovalPage = () => {
       setLoading(false);
     }
   }, [authHeader]);
+
+  useEffect(() => {
+    fetchPending();
+  }, [fetchPending]);
 
   const approve = async (type, id) => {
     setActionLoading(`${type}-${id}-approve`);

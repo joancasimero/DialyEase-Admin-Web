@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Card, Badge, Button, Alert, Spinner, Modal, Table } from 'react-bootstrap';
-import { FiClock, FiCalendar } from 'react-icons/fi';
 import api from '../../services/api';
 import moment from 'moment-timezone'; // Add this import
 

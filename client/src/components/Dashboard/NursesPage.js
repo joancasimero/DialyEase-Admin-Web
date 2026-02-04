@@ -25,10 +25,6 @@ const NursesPage = () => {
   const [error, setError] = useState("");
   const [showArchived, setShowArchived] = useState(false);
 
-  useEffect(() => {
-    fetchNurses();
-  }, [fetchNurses]);
-
   const fetchNurses = useCallback(async () => {
     try {
       const endpoint = showArchived 
@@ -53,6 +49,10 @@ const NursesPage = () => {
       setLoading(false);
     }
   }, [showArchived]);
+
+  useEffect(() => {
+    fetchNurses();
+  }, [fetchNurses]);
 
   const handleArchiveNurse = async (id) => {
     if (window.confirm('Are you sure you want to archive this nurse?')) {

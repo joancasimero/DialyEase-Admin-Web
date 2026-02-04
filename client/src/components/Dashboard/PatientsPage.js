@@ -17,6 +17,7 @@ const PatientsPage = () => {
   const { isSuperAdmin } = useAuth();
   const [patients, setPatients] = useState([]);
   const [archivedPatients, setArchivedPatients] = useState([]);
+  // eslint-disable-next-line no-unused-vars
   const [showArchived, setShowArchived] = useState(false); 
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);

@@ -18,10 +18,6 @@ const AttendancePage = () => {
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState('');
 
-  useEffect(() => {
-    fetchAttendance();
-  }, [fetchAttendance]);
-
   const getAuthHeader = () => {
     const admin = JSON.parse(localStorage.getItem('admin'));
     const token = admin?.token;
@@ -49,6 +45,10 @@ const AttendancePage = () => {
     }
     setLoading(false);
   }, [selectedDate, statusFilter]);
+
+  useEffect(() => {
+    fetchAttendance();
+  }, [fetchAttendance]);
 
   const handleExportPDF = async () => {
     setExportError('');

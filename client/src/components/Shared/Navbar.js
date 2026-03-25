@@ -21,7 +21,12 @@ const CustomNavbar = () => {
           api.get('/patients', { headers: authHeader }),
           api.get('/nurses', { headers: authHeader })
         ]);
-        setPendingCount((patientsRes.data?.length || 0) + (nursesRes.data?.length || 0));
+        // Filter for unapproved ONLY (not all patients/nurses)
+        const patients = patientsRes.data.data || patientsRes.data || [];
+        const nurses = nursesRes.data || [];
+        const unapprovedPatients = patients.filter(p => !p.approved);
+        const unapprovedNurses = nurses.filter(n => !n.approved);
+        setPendingCount(unapprovedPatients.length + unapprovedNurses.length);
       } catch {
         setPendingCount(0);
       }

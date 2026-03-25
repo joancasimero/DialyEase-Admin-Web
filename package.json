@@ -5,6 +5,9 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
+    "dev:server": "nodemon server.js",
+    "dev:client": "npm --prefix client start",
+    "dev:all": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "seed": "node seed.js",
     "build": "cd client && npm install && npm run build",
     "install-client": "cd client && npm install",
@@ -42,6 +45,7 @@
     "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
+    "concurrently": "^9.2.1",
     "nodemon": "^3.0.1"
   },
   "engines": {

@@ -538,7 +538,11 @@ const AnalyticsPage = () => {
                       value={selectedMachineId || ''} 
                       onChange={(e) => setSelectedMachineId(e.target.value)}
                     >
-                      {stats.machineUtilization.map((machine) => (
+                      {[...stats.machineUtilization].sort((a, b) => {
+                        const numA = parseInt(a.name.replace(/\D/g, '')) || 0;
+                        const numB = parseInt(b.name.replace(/\D/g, '')) || 0;
+                        return numA - numB;
+                      }).map((machine) => (
                         <option key={machine._id} value={machine._id}>
                           {machine.name} {machine.isActive ? '(Active)' : '(Inactive)'}
                         </option>

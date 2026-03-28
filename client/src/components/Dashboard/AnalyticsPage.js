@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Container, Row, Col, Card, Spinner, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { FiArrowLeft, FiTrendingUp, FiUsers, FiBarChart3, FiCalendar, FiClock, FiCheck } from 'react-icons/fi';
+import { FiArrowLeft, FiTrendingUp, FiUsers, FiBarChart2, FiCalendar, FiClock, FiCheck } from 'react-icons/fi';
 import api from '../../services/api';
 import moment from 'moment-timezone';
 import './AnalyticsPage.css';
@@ -195,7 +195,7 @@ const AnalyticsPage = () => {
               <Card className="metric-card">
                 <Card.Body>
                   <div className="metric-icon machines-icon">
-                    <FiBarChart3 size={28} />
+                    <FiBarChart2 size={28} />
                   </div>
                   <div className="metric-content">
                     <h3 className="metric-value">{stats.totalMachines}</h3>
@@ -315,7 +315,7 @@ const AnalyticsPage = () => {
                   </div>
                   <div className="trend-item">
                     <div className="trend-label">
-                      <FiBarChart3 size={20} />
+                      <FiBarChart2 size={20} />
                       <span>Total Registered</span>
                     </div>
                     <p className="trend-value">{stats.totalPatients}</p>

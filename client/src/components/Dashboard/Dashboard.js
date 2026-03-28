@@ -1595,10 +1595,10 @@ function getPhilippineDateStr() {
 
         {/* See More Button - Bottom Right */}
         <div style={{
-          position: 'fixed',
-          bottom: '2rem',
-          right: '2rem',
-          zIndex: 1000
+          display: 'flex',
+          justifyContent: 'flex-end',
+          marginTop: '2rem',
+          marginBottom: '1rem'
         }}>
           <button
             onClick={() => navigate('/analytics')}

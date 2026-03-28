@@ -16,6 +16,7 @@ import { AuthProvider } from './context/AuthContext';
 import ConnectionLost from './components/Shared/ConnectionLost';
 import api from './services/api';
 import ForgotPassword from './components/Auth/ForgotPassword';
+import AnalyticsPage from './components/Dashboard/AnalyticsPage';
 
 function AppContent() {
   const location = useLocation();
@@ -65,6 +66,7 @@ function AppContent() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route element={<PrivateRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/analytics" element={<AnalyticsPage />} />
               <Route path="/patients" element={<PatientsPage />} />
               <Route path="/nurse" element={<NursesPage />} />
               <Route path="/approval" element={<ApprovalPage />} />

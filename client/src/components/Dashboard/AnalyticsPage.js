@@ -31,7 +31,8 @@ const AnalyticsPage = () => {
       '41-50': 0,
       '51-60': 0,
       '60+': 0
-    }
+    },
+    machineUtilization: []
   });
 
   const getAuthHeader = () => {
@@ -136,6 +137,33 @@ const AnalyticsPage = () => {
       }
     });
 
+    // Machine utilization calculation
+    const todays = now.format('YYYY-MM-DD');
+    const machineUtilization = machines.map(machine => {
+      // Daily utilization
+      const dailyAppointments = appointments.filter(apt => 
+        apt.machine && apt.machine._id === machine._id && apt.date === todays && apt.isBooked
+      ).length;
+      const dailyUtilization = (dailyAppointments / 30) * 100; // 30 slots per day (15 morning + 15 afternoon)
+
+      // Monthly utilization
+      const monthlyAppointments = appointments.filter(apt => 
+        apt.machine && apt.machine._id === machine._id && 
+        moment(apt.date).isBetween(monthStart, monthEnd) && apt.isBooked
+      ).length;
+      const monthlyUtilization = (monthlyAppointments / (30 * 30)) * 100; // ~30 days * 30 slots per day
+
+      return {
+        _id: machine._id,
+        name: machine.name,
+        dailyUtilization: Math.round(dailyUtilization),
+        monthlyUtilization: Math.round(monthlyUtilization),
+        dailyAppointments,
+        monthlyAppointments,
+        isActive: machine.isActive
+      };
+    });
+
     setStats({
       totalPatients: patients.length,
       newPatientsThisMonth,
@@ -147,7 +175,8 @@ const AnalyticsPage = () => {
       appointmentsPending,
       avgAppointmentsPerDay: avgAppointmentsPerDay.toFixed(1),
       occupancyRate,
-      ageGroups
+      ageGroups,
+      machineUtilization
     });
   }, [patients, machines, appointments]);
 
@@ -480,6 +509,69 @@ const AnalyticsPage = () => {
                       <span>Total Registered</span>
                     </div>
                     <p className="trend-value">{stats.totalPatients}</p>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </div>
+
+        {/* Machine Utilization Section */}
+        <div className="analytics-section">
+          <h2 className="section-title">Machine Utilization Summary</h2>
+          <Row>
+            <Col lg={12} className="analytics-col">
+              <Card className="machine-utilization-card">
+                <Card.Body>
+                  <div className="machine-grid">
+                    {stats.machineUtilization.length > 0 ? (
+                      stats.machineUtilization.map((machine) => (
+                        <div key={machine._id} className="machine-item">
+                          <div className="machine-header">
+                            <h4 className="machine-name">{machine.name}</h4>
+                            <span className={`status-badge ${machine.isActive ? 'active' : 'inactive'}`}>
+                              {machine.isActive ? 'Active' : 'Inactive'}
+                            </span>
+                          </div>
+                          
+                          <div className="utilization-row">
+                            <div className="utilization-metric">
+                              <p className="metric-label">Today</p>
+                              <div className="utilization-bar-wrapper">
+                                <div className="utilization-bar">
+                                  <div 
+                                    className="utilization-fill" 
+                                    style={{width: `${machine.dailyUtilization}%`}}
+                                  ></div>
+                                </div>
+                              </div>
+                              <div className="metric-info">
+                                <span className="utilization-percent">{machine.dailyUtilization}%</span>
+                                <span className="metric-detail">{machine.dailyAppointments} of 30 slots</span>
+                              </div>
+                            </div>
+
+                            <div className="utilization-metric">
+                              <p className="metric-label">This Month</p>
+                              <div className="utilization-bar-wrapper">
+                                <div className="utilization-bar">
+                                  <div 
+                                    className="utilization-fill" 
+                                    style={{width: `${machine.monthlyUtilization}%`}}
+                                  ></div>
+                                </div>
+                              </div>
+                              <div className="metric-info">
+                                <span className="utilization-percent">{machine.monthlyUtilization}%</span>
+                                <span className="metric-detail">{machine.monthlyAppointments} appointments</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p style={{textAlign: 'center', color: '#9ca3af'}}>No machines available</p>
+                    )}
                   </div>
                 </Card.Body>
               </Card>

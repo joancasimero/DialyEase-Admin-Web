@@ -366,10 +366,6 @@ const AnalyticsPage = () => {
                           labelStyle={{ color: '#1f2937', fontWeight: '700' }}
                           formatter={(value) => [`${value} patients`, 'Count']}
                         />
-                        <Legend 
-                          wrapperStyle={{ paddingTop: '20px' }}
-                          iconType="square"
-                        />
                         <Bar 
                           dataKey="patients" 
                           fill="#2a3f9d"

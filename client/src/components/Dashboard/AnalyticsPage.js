@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Row, Col, Card, Spinner, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { FiArrowLeft, FiTrendingUp, FiUsers, FiBarChart2, FiCalendar, FiClock, FiCheck } from 'react-icons/fi';
+import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from 'recharts';
 import api from '../../services/api';
 import moment from 'moment-timezone';
 import './AnalyticsPage.css';
@@ -333,31 +334,63 @@ const AnalyticsPage = () => {
         <div className="analytics-section">
           <h2 className="section-title">Patient Demographics - Age Distribution</h2>
           <Row>
-            <Col lg={12} className="analytics-col">
+            <Col lg={8} md={12} className="analytics-col">
               <Card className="age-demographics-card">
                 <Card.Body>
-                  <div className="age-demographics-container">
+                  <div className="age-chart-container">
+                    <ResponsiveContainer width="100%" height={300}>
+                      <PieChart>
+                        <Pie
+                          data={Object.entries(stats.ageGroups).map(([ageRange, count]) => ({
+                            name: ageRange,
+                            value: count,
+                            label: `${ageRange}: ${count}`
+                          }))}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={true}
+                          label={({ name, value }) => `${name}: ${value}`}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                        >
+                          <Cell fill="#2a3f9d" />
+                          <Cell fill="#4a6cf7" />
+                          <Cell fill="#667eea" />
+                          <Cell fill="#8b9ef4" />
+                          <Cell fill="#7c3aed" />
+                        </Pie>
+                        <Tooltip 
+                          formatter={(value) => `${value} patients`}
+                          contentStyle={{
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            border: '1px solid #e5e7eb',
+                            borderRadius: '8px'
+                          }}
+                        />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+            <Col lg={4} md={12} className="analytics-col">
+              <Card className="age-demographics-stats-card">
+                <Card.Body>
+                  <h5 className="age-stats-title">Age Breakdown</h5>
+                  <div className="age-breakdown-list">
                     {Object.entries(stats.ageGroups).map(([ageRange, count]) => {
-                      const total = stats.totalPatients;
-                      const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
-                      const maxCount = Math.max(...Object.values(stats.ageGroups));
-                      const barWidth = maxCount > 0 ? (count / maxCount) * 100 : 0;
-
+                      const percentage = stats.totalPatients > 0 ? Math.round((count / stats.totalPatients) * 100) : 0;
                       return (
-                        <div key={ageRange} className="age-group-item">
-                          <div className="age-group-header">
-                            <span className="age-range-label">{ageRange} years</span>
-                            <span className="age-count-badge">{count} patients</span>
+                        <div key={ageRange} className="age-breakdown-item">
+                          <div className="age-breakdown-label">
+                            <span className="age-label-text">{ageRange} years</span>
+                            <span className="age-label-percent">{percentage}%</span>
                           </div>
-                          <div className="age-bar-container">
-                            <div className="age-bar" style={{
-                              width: `${barWidth}%`,
-                              background: `linear-gradient(90deg, #2a3f9d 0%, #4a6cf7 100%)`
-                            }}></div>
-                          </div>
-                          <div className="age-stats-row">
-                            <span className="age-percentage">{percentage}% of total</span>
-                            <span className="age-stat-value">{count}</span>
+                          <div className="age-breakdown-value">
+                            <span className="age-count">{count}</span>
+                            <span className="age-count-label">patients</span>
                           </div>
                         </div>
                       );

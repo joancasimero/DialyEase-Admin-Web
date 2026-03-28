@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Row, Col, Card, Spinner, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { FiArrowLeft, FiTrendingUp, FiUsers, FiBarChart2, FiCalendar, FiClock, FiCheck } from 'react-icons/fi';
-import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import api from '../../services/api';
 import moment from 'moment-timezone';
 import './AnalyticsPage.css';
@@ -334,67 +334,50 @@ const AnalyticsPage = () => {
         <div className="analytics-section">
           <h2 className="section-title">Patient Demographics - Age Distribution</h2>
           <Row>
-            <Col lg={8} md={12} className="analytics-col">
+            <Col lg={12} className="analytics-col">
               <Card className="age-demographics-card">
                 <Card.Body>
                   <div className="age-chart-container">
-                    <ResponsiveContainer width="100%" height={300}>
-                      <PieChart>
-                        <Pie
-                          data={Object.entries(stats.ageGroups).map(([ageRange, count]) => ({
-                            name: ageRange,
-                            value: count,
-                            label: `${ageRange}: ${count}`
-                          }))}
-                          cx="50%"
-                          cy="50%"
-                          labelLine={true}
-                          label={({ name, value }) => `${name}: ${value}`}
-                          outerRadius={80}
-                          fill="#8884d8"
-                          dataKey="value"
-                        >
-                          <Cell fill="#2a3f9d" />
-                          <Cell fill="#4a6cf7" />
-                          <Cell fill="#667eea" />
-                          <Cell fill="#8b9ef4" />
-                          <Cell fill="#7c3aed" />
-                        </Pie>
-                        <Tooltip 
-                          formatter={(value) => `${value} patients`}
+                    <ResponsiveContainer width="100%" height={350}>
+                      <BarChart
+                        data={Object.entries(stats.ageGroups).map(([ageRange, count]) => ({
+                          name: ageRange,
+                          patients: count
+                        }))}
+                        margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(42, 63, 157, 0.1)" />
+                        <XAxis 
+                          dataKey="name" 
+                          stroke="#6b7280"
+                          style={{ fontSize: '0.9rem', fontWeight: '600' }}
+                        />
+                        <YAxis 
+                          stroke="#6b7280"
+                          style={{ fontSize: '0.9rem' }}
+                        />
+                        <Tooltip
                           contentStyle={{
                             backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                            border: '1px solid #e5e7eb',
-                            borderRadius: '8px'
+                            border: '2px solid #2a3f9d',
+                            borderRadius: '8px',
+                            padding: '12px'
                           }}
+                          labelStyle={{ color: '#1f2937', fontWeight: '700' }}
+                          formatter={(value) => [`${value} patients`, 'Count']}
                         />
-                        <Legend />
-                      </PieChart>
+                        <Legend 
+                          wrapperStyle={{ paddingTop: '20px' }}
+                          iconType="square"
+                        />
+                        <Bar 
+                          dataKey="patients" 
+                          fill="#2a3f9d"
+                          radius={[0, 8, 8, 0]}
+                          animationDuration={800}
+                        />
+                      </BarChart>
                     </ResponsiveContainer>
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col lg={4} md={12} className="analytics-col">
-              <Card className="age-demographics-stats-card">
-                <Card.Body>
-                  <h5 className="age-stats-title">Age Breakdown</h5>
-                  <div className="age-breakdown-list">
-                    {Object.entries(stats.ageGroups).map(([ageRange, count]) => {
-                      const percentage = stats.totalPatients > 0 ? Math.round((count / stats.totalPatients) * 100) : 0;
-                      return (
-                        <div key={ageRange} className="age-breakdown-item">
-                          <div className="age-breakdown-label">
-                            <span className="age-label-text">{ageRange} years</span>
-                            <span className="age-label-percent">{percentage}%</span>
-                          </div>
-                          <div className="age-breakdown-value">
-                            <span className="age-count">{count}</span>
-                            <span className="age-count-label">patients</span>
-                          </div>
-                        </div>
-                      );
-                    })}
                   </div>
                 </Card.Body>
               </Card>

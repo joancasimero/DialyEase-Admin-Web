@@ -679,102 +679,7 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  min-height: 350px;
-}
-
-.age-demographics-stats-card {
-  border: none;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(42, 63, 157, 0.1);
-  transition: all 0.3s ease;
-  overflow: hidden;
-}
-
-.age-demographics-stats-card:hover {
-  box-shadow: 0 8px 24px rgba(42, 63, 157, 0.15);
-  transform: translateY(-2px);
-}
-
-.age-demographics-stats-card .card-body {
-  padding: 2.5rem;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%);
-}
-
-.age-stats-title {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: #1f2937;
-  font-family: 'Inter Tight', sans-serif;
-  margin-bottom: 1.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.age-breakdown-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.age-breakdown-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  background: linear-gradient(135deg, #f8f9ff 0%, #f1f5ff 100%);
-  border-radius: 12px;
-  border-left: 4px solid #2a3f9d;
-  transition: all 0.3s ease;
-}
-
-.age-breakdown-item:hover {
-  background: linear-gradient(135deg, #f0f4ff 0%, #e8f0ff 100%);
-  transform: translateX(4px);
-  box-shadow: 0 4px 12px rgba(42, 63, 157, 0.1);
-}
-
-.age-breakdown-label {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.age-label-text {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #1f2937;
-  font-family: 'Inter Tight', sans-serif;
-}
-
-.age-label-percent {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #6b7280;
-}
-
-.age-breakdown-value {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.25rem;
-}
-
-.age-count {
-  font-size: 1.4rem;
-  font-weight: 800;
-  background: linear-gradient(135deg, #2a3f9d 0%, #4a6cf7 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-family: 'Inter Tight', sans-serif;
-}
-
-.age-count-label {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: #9ca3af;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  min-height: 380px;
 }
 
 @media (max-width: 768px) {
@@ -829,7 +734,7 @@
   }
 
   .age-chart-container {
-    min-height: 280px;
+    min-height: 320px;
   }
 
   .age-demographics-stats-card .card-body {

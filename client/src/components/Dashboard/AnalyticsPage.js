@@ -23,7 +23,14 @@ const AnalyticsPage = () => {
     appointmentsCompleted: 0,
     appointmentsPending: 0,
     avgAppointmentsPerDay: 0,
-    occupancyRate: 0
+    occupancyRate: 0,
+    ageGroups: {
+      '18-30': 0,
+      '31-40': 0,
+      '41-50': 0,
+      '51-60': 0,
+      '60+': 0
+    }
   });
 
   const getAuthHeader = () => {
@@ -106,6 +113,28 @@ const AnalyticsPage = () => {
       ? Math.round((appointmentsCompleted / appointments.length) * 100) 
       : 0;
 
+    // Age demographics calculation
+    const ageGroups = {
+      '18-30': 0,
+      '31-40': 0,
+      '41-50': 0,
+      '51-60': 0,
+      '60+': 0
+    };
+
+    patients.forEach(patient => {
+      if (patient.birthday) {
+        const birthDate = moment(patient.birthday);
+        const age = now.diff(birthDate, 'years');
+        
+        if (age >= 18 && age <= 30) ageGroups['18-30']++;
+        else if (age >= 31 && age <= 40) ageGroups['31-40']++;
+        else if (age >= 41 && age <= 50) ageGroups['41-50']++;
+        else if (age >= 51 && age <= 60) ageGroups['51-60']++;
+        else if (age > 60) ageGroups['60+']++;
+      }
+    });
+
     setStats({
       totalPatients: patients.length,
       newPatientsThisMonth,
@@ -116,7 +145,8 @@ const AnalyticsPage = () => {
       appointmentsCompleted,
       appointmentsPending,
       avgAppointmentsPerDay: avgAppointmentsPerDay.toFixed(1),
-      occupancyRate
+      occupancyRate,
+      ageGroups
     });
   }, [patients, machines, appointments]);
 
@@ -293,6 +323,46 @@ const AnalyticsPage = () => {
                       : 0}%
                   </p>
                   <p className="analytics-card-description">Appointment completion rate</p>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </div>
+
+        {/* Age Demographic Section */}
+        <div className="analytics-section">
+          <h2 className="section-title">Patient Demographics - Age Distribution</h2>
+          <Row>
+            <Col lg={12} className="analytics-col">
+              <Card className="age-demographics-card">
+                <Card.Body>
+                  <div className="age-demographics-container">
+                    {Object.entries(stats.ageGroups).map(([ageRange, count]) => {
+                      const total = stats.totalPatients;
+                      const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
+                      const maxCount = Math.max(...Object.values(stats.ageGroups));
+                      const barWidth = maxCount > 0 ? (count / maxCount) * 100 : 0;
+
+                      return (
+                        <div key={ageRange} className="age-group-item">
+                          <div className="age-group-header">
+                            <span className="age-range-label">{ageRange} years</span>
+                            <span className="age-count-badge">{count} patients</span>
+                          </div>
+                          <div className="age-bar-container">
+                            <div className="age-bar" style={{
+                              width: `${barWidth}%`,
+                              background: `linear-gradient(90deg, #2a3f9d 0%, #4a6cf7 100%)`
+                            }}></div>
+                          </div>
+                          <div className="age-stats-row">
+                            <span className="age-percentage">{percentage}% of total</span>
+                            <span className="age-stat-value">{count}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </Card.Body>
               </Card>
             </Col>

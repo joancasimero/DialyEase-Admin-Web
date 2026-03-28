@@ -40,7 +40,8 @@ const AnalyticsPage = () => {
       '60+': 0
     },
     machineUtilization: [],
-    monthlyRegistrations: []
+    monthlyRegistrations: [],
+    topHospitals: []
   });
 
   const [selectedMachineId, setSelectedMachineId] = useState(null);
@@ -221,6 +222,22 @@ const AnalyticsPage = () => {
       });
     }
 
+    // Top 3 referral hospitals
+    const hospitalCounts = {};
+    patients.forEach(patient => {
+      if (patient.hospital) {
+        hospitalCounts[patient.hospital] = (hospitalCounts[patient.hospital] || 0) + 1;
+      }
+    });
+    const topHospitals = Object.entries(hospitalCounts)
+      .map(([hospital, count]) => ({
+        hospital,
+        count,
+        percentage: patients.length > 0 ? Math.round((count / patients.length) * 100) : 0
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 3);
+
     setStats({
       totalPatients: patients.length,
       newPatientsThisMonth,
@@ -240,7 +257,8 @@ const AnalyticsPage = () => {
       machineAvailability,
       ageGroups,
       machineUtilization,
-      monthlyRegistrations
+      monthlyRegistrations,
+      topHospitals
     });
   }, [patients, machines, appointments, attendance]);
 
@@ -544,6 +562,48 @@ const AnalyticsPage = () => {
                 </Card.Body>
               </Card>
             </Col>
+          </Row>
+        </div>
+
+        {/* Top 3 Referral Hospitals Section */}
+        <div className="analytics-section">
+          <h2 className="section-title">Top 3 Referral Hospitals</h2>
+          <Row>
+            {stats.topHospitals.length > 0 ? (
+              stats.topHospitals.map((hospital, index) => (
+                <Col lg={4} md={6} sm={12} key={hospital.hospital} className="hospital-col">
+                  <Card className="hospital-card">
+                    <Card.Body>
+                      <div className="hospital-rank">
+                        <span className={`rank-badge rank-${index + 1}`}>{index + 1}</span>
+                      </div>
+                      <div className="hospital-content">
+                        <h3 className="hospital-name">{hospital.hospital}</h3>
+                        <p className="hospital-stat">
+                          <span className="stat-label">Patients</span>
+                          <span className="stat-number">{hospital.count}</span>
+                        </p>
+                        <div className="hospital-bar">
+                          <div 
+                            className="hospital-bar-fill"
+                            style={{width: `${hospital.percentage}%`}}
+                          ></div>
+                        </div>
+                        <p className="hospital-percentage">{hospital.percentage}% of total</p>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              ))
+            ) : (
+              <Col lg={12} className="analytics-col">
+                <Card className="hospital-card">
+                  <Card.Body style={{textAlign: 'center', padding: '2rem'}}>
+                    <p style={{color: '#9ca3af', fontSize: '0.95rem'}}>No hospital data available</p>
+                  </Card.Body>
+                </Card>
+              </Col>
+            )}
           </Row>
         </div>
 

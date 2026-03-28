@@ -39,7 +39,8 @@ const AnalyticsPage = () => {
       '51-60': 0,
       '60+': 0
     },
-    machineUtilization: []
+    machineUtilization: [],
+    monthlyPatientRegistrations: []
   });
 
   const [selectedMachineId, setSelectedMachineId] = useState(null);
@@ -172,6 +173,24 @@ const AnalyticsPage = () => {
       }
     });
 
+    // Monthly patient registrations calculation (last 12 months)
+    const monthlyPatientRegistrations = [];
+    for (let i = 11; i >= 0; i--) {
+      const monthStart = moment().tz('Asia/Manila').subtract(i, 'months').startOf('month');
+      const monthEnd = moment().tz('Asia/Manila').subtract(i, 'months').endOf('month');
+      
+      const monthlyCount = patients.filter(p => {
+        const createdAt = moment(p.createdAt);
+        return createdAt.isBetween(monthStart, monthEnd);
+      }).length;
+      
+      monthlyPatientRegistrations.push({
+        month: moment().tz('Asia/Manila').subtract(i, 'months').format('MMM'),
+        count: monthlyCount,
+        fullDate: moment().tz('Asia/Manila').subtract(i, 'months').format('MMMM YYYY')
+      });
+    }
+
     // Machine utilization calculation
     const todays = now.format('YYYY-MM-DD');
     const machineUtilization = machines.map(machine => {
@@ -221,7 +240,8 @@ const AnalyticsPage = () => {
       adherenceRate,
       machineAvailability,
       ageGroups,
-      machineUtilization
+      machineUtilization,
+      monthlyPatientRegistrations
     });
   }, [patients, machines, appointments, attendance]);
 
@@ -456,6 +476,59 @@ const AnalyticsPage = () => {
                           dataKey="patients" 
                           fill="#2a3f9d"
                           radius={[0, 8, 8, 0]}
+                          animationDuration={800}
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </div>
+
+        {/* Monthly Patient Registrations Section */}
+        <div className="analytics-section">
+          <h2 className="section-title">New Patient Registrations - Monthly Trend</h2>
+          <Row>
+            <Col lg={12} className="analytics-col">
+              <Card className="monthly-registrations-card">
+                <Card.Body>
+                  <div className="monthly-chart-container">
+                    <ResponsiveContainer width="100%" height={350}>
+                      <BarChart
+                        data={stats.monthlyPatientRegistrations}
+                        margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(42, 63, 157, 0.1)" />
+                        <XAxis 
+                          dataKey="month" 
+                          stroke="#6b7280"
+                          style={{ fontSize: '0.9rem', fontWeight: '600' }}
+                        />
+                        <YAxis 
+                          stroke="#6b7280"
+                          style={{ fontSize: '0.9rem' }}
+                          label={{ value: 'New Patients', angle: -90, position: 'insideLeft' }}
+                        />
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            border: '2px solid #4a6cf7',
+                            borderRadius: '8px',
+                            padding: '12px'
+                          }}
+                          labelStyle={{ color: '#1f2937', fontWeight: '700' }}
+                          formatter={(value) => [`${value} new patients`, 'Registrations']}
+                          labelFormatter={(label) => {
+                            const monthData = stats.monthlyPatientRegistrations.find(m => m.month === label);
+                            return monthData ? monthData.fullDate : label;
+                          }}
+                        />
+                        <Bar 
+                          dataKey="count" 
+                          fill="#4a6cf7"
+                          radius={[8, 8, 0, 0]}
                           animationDuration={800}
                         />
                       </BarChart>

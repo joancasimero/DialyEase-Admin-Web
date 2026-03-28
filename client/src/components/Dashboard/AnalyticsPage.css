@@ -682,6 +682,35 @@
   min-height: 380px;
 }
 
+/* Monthly Patient Registrations Styles */
+.monthly-registrations-card {
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(74, 108, 247, 0.1);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f8f9ff 0%, #f1f5ff 100%);
+  border-top: 4px solid #4a6cf7;
+}
+
+.monthly-registrations-card:hover {
+  box-shadow: 0 8px 24px rgba(74, 108, 247, 0.15);
+  transform: translateY(-2px);
+}
+
+.monthly-registrations-card .card-body {
+  padding: 2.5rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 249, 255, 0.95) 100%);
+}
+
+.monthly-chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 380px;
+}
+
 @media (max-width: 768px) {
   .analytics-page {
     padding: 1rem 0;
@@ -734,6 +763,14 @@
   }
 
   .age-chart-container {
+    min-height: 320px;
+  }
+
+  .monthly-registrations-card .card-body {
+    padding: 1.5rem;
+  }
+
+  .monthly-chart-container {
     min-height: 320px;
   }
 

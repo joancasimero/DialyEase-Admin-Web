@@ -35,6 +35,8 @@ const AnalyticsPage = () => {
     machineUtilization: []
   });
 
+  const [selectedMachineId, setSelectedMachineId] = useState(null);
+
   const getAuthHeader = () => {
     const admin = JSON.parse(localStorage.getItem('admin'));
     const token = admin?.token;
@@ -198,6 +200,12 @@ const AnalyticsPage = () => {
   useEffect(() => {
     calculateStats();
   }, [calculateStats]);
+
+  useEffect(() => {
+    if (stats.machineUtilization.length > 0 && !selectedMachineId) {
+      setSelectedMachineId(stats.machineUtilization[0]._id);
+    }
+  }, [stats.machineUtilization, selectedMachineId]);
 
   if (loading) {
     return (
@@ -518,61 +526,109 @@ const AnalyticsPage = () => {
 
         {/* Machine Utilization Section */}
         <div className="analytics-section">
-          <h2 className="section-title">Machine Utilization Summary</h2>
+          <h2 className="section-title">Machine Utilization Analysis</h2>
           <Row>
             <Col lg={12} className="analytics-col">
               <Card className="machine-utilization-card">
                 <Card.Body>
-                  <div className="machine-grid">
-                    {stats.machineUtilization.length > 0 ? (
-                      stats.machineUtilization.map((machine) => (
-                        <div key={machine._id} className="machine-item">
-                          <div className="machine-header">
-                            <h4 className="machine-name">{machine.name}</h4>
-                            <span className={`status-badge ${machine.isActive ? 'active' : 'inactive'}`}>
-                              {machine.isActive ? 'Active' : 'Inactive'}
+                  <div className="machine-selector-container">
+                    <label className="machine-selector-label">Select Machine</label>
+                    <select 
+                      className="machine-selector-dropdown"
+                      value={selectedMachineId || ''} 
+                      onChange={(e) => setSelectedMachineId(e.target.value)}
+                    >
+                      {stats.machineUtilization.map((machine) => (
+                        <option key={machine._id} value={machine._id}>
+                          {machine.name} {machine.isActive ? '(Active)' : '(Inactive)'}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {selectedMachineId && stats.machineUtilization.length > 0 && (() => {
+                    const selectedMachine = stats.machineUtilization.find(m => m._id === selectedMachineId);
+                    return selectedMachine ? (
+                      <div className="single-machine-display">
+                        <div className="machine-header-detail">
+                          <div className="machine-title-group">
+                            <h3 className="machine-name-detail">{selectedMachine.name}</h3>
+                            <span className={`status-badge ${selectedMachine.isActive ? 'active' : 'inactive'}`}>
+                              {selectedMachine.isActive ? 'Active' : 'Inactive'}
                             </span>
                           </div>
-                          
-                          <div className="utilization-row">
-                            <div className="utilization-metric">
-                              <p className="metric-label">Today</p>
-                              <div className="utilization-bar-wrapper">
-                                <div className="utilization-bar">
+                        </div>
+
+                        <div className="machine-metrics-grid">
+                          <div className="machine-metric-card">
+                            <div className="metric-header">
+                              <p className="metric-label">Today's Utilization</p>
+                              <span className="metric-icon">📅</span>
+                            </div>
+                            <div className="metric-content">
+                              <div className="large-utilization-bar">
+                                <div className="utilization-bar-background">
                                   <div 
-                                    className="utilization-fill" 
-                                    style={{width: `${machine.dailyUtilization}%`}}
+                                    className="utilization-bar-fill" 
+                                    style={{width: `${selectedMachine.dailyUtilization}%`}}
                                   ></div>
                                 </div>
                               </div>
-                              <div className="metric-info">
-                                <span className="utilization-percent">{machine.dailyUtilization}%</span>
-                                <span className="metric-detail">{machine.dailyAppointments} of 30 slots</span>
+                              <div className="metric-footer">
+                                <span className="large-percent">{selectedMachine.dailyUtilization}%</span>
+                                <span className="metric-subtext">{selectedMachine.dailyAppointments} of 30 slots booked</span>
                               </div>
                             </div>
+                          </div>
 
-                            <div className="utilization-metric">
-                              <p className="metric-label">This Month</p>
-                              <div className="utilization-bar-wrapper">
-                                <div className="utilization-bar">
+                          <div className="machine-metric-card">
+                            <div className="metric-header">
+                              <p className="metric-label">Monthly Utilization</p>
+                              <span className="metric-icon">📊</span>
+                            </div>
+                            <div className="metric-content">
+                              <div className="large-utilization-bar">
+                                <div className="utilization-bar-background">
                                   <div 
-                                    className="utilization-fill" 
-                                    style={{width: `${machine.monthlyUtilization}%`}}
+                                    className="utilization-bar-fill" 
+                                    style={{width: `${selectedMachine.monthlyUtilization}%`}}
                                   ></div>
                                 </div>
                               </div>
-                              <div className="metric-info">
-                                <span className="utilization-percent">{machine.monthlyUtilization}%</span>
-                                <span className="metric-detail">{machine.monthlyAppointments} appointments</span>
+                              <div className="metric-footer">
+                                <span className="large-percent">{selectedMachine.monthlyUtilization}%</span>
+                                <span className="metric-subtext">{selectedMachine.monthlyAppointments} appointments this month</span>
                               </div>
                             </div>
                           </div>
                         </div>
-                      ))
-                    ) : (
-                      <p style={{textAlign: 'center', color: '#9ca3af'}}>No machines available</p>
-                    )}
-                  </div>
+
+                        <div className="machine-stats-detail">
+                          <div className="stat-detail-item">
+                            <span className="stat-detail-icon">⚙️</span>
+                            <div className="stat-detail-content">
+                              <p className="stat-detail-label">Daily Appointments</p>
+                              <p className="stat-detail-value">{selectedMachine.dailyAppointments}</p>
+                            </div>
+                          </div>
+                          <div className="stat-detail-item">
+                            <span className="stat-detail-icon">📈</span>
+                            <div className="stat-detail-content">
+                              <p className="stat-detail-label">Monthly Appointments</p>
+                              <p className="stat-detail-value">{selectedMachine.monthlyAppointments}</p>
+                            </div>
+                          </div>
+                          <div className="stat-detail-item">
+                            <span className="stat-detail-icon">🎯</span>
+                            <div className="stat-detail-content">
+                              <p className="stat-detail-label">Average Per Day</p>
+                              <p className="stat-detail-value">{Math.round(selectedMachine.monthlyAppointments / 30)}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : null;
+                  })()}
                 </Card.Body>
               </Card>
             </Col>

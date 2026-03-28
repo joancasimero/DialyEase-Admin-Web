@@ -924,6 +924,302 @@
   font-weight: 600;
   font-family: 'Inter Tight', sans-serif;
 }
+
+/* Machine Selector Styles */
+.machine-selector-container {
+  margin-bottom: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.machine-selector-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: 'Inter Tight', sans-serif;
+}
+
+.machine-selector-dropdown {
+  padding: 1rem 1.25rem;
+  border: 2px solid rgba(42, 63, 157, 0.2);
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  background: linear-gradient(135deg, #ffffff 0%, #f9fbff 100%);
+  font-family: 'Inter Tight', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234a6cf7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.25rem;
+  padding-right: 3rem;
+}
+
+.machine-selector-dropdown:hover {
+  border-color: rgba(42, 63, 157, 0.4);
+  background-color: #f9fbff;
+  box-shadow: 0 4px 12px rgba(42, 63, 157, 0.1);
+}
+
+.machine-selector-dropdown:focus {
+  outline: none;
+  border-color: #4a6cf7;
+  box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.1), 0 4px 12px rgba(42, 63, 157, 0.15);
+}
+
+/* Single Machine Display Styles */
+.single-machine-display {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.machine-header-detail {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px solid rgba(42, 63, 157, 0.08);
+}
+
+.machine-title-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.machine-name-detail {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #1f2937;
+  margin: 0;
+  font-family: 'Inter Tight', sans-serif;
+}
+
+/* Machine Metrics Grid */
+.machine-metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+@media (max-width: 768px) {
+  .machine-metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+.machine-metric-card {
+  background: linear-gradient(135deg, #f8f9ff 0%, #f1f5ff 100%);
+  border: 1px solid rgba(42, 63, 157, 0.1);
+  border-radius: 14px;
+  padding: 2rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.machine-metric-card:hover {
+  background: linear-gradient(135deg, #f0f4ff 0%, #e8f0ff 100%);
+  border-color: rgba(42, 63, 157, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(42, 63, 157, 0.12);
+}
+
+.metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.metric-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: 'Inter Tight', sans-serif;
+  margin: 0;
+}
+
+.metric-icon {
+  font-size: 1.5rem;
+  opacity: 0.8;
+}
+
+.metric-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.large-utilization-bar {
+  width: 100%;
+}
+
+.utilization-bar-background {
+  width: 100%;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(42, 63, 157, 0.1);
+  position: relative;
+}
+
+.utilization-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #2a3f9d 0%, #4a6cf7 100%);
+  border-radius: 8px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(42, 63, 157, 0.2);
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.metric-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.large-percent {
+  font-size: 2rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #2a3f9d 0%, #4a6cf7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-family: 'Inter Tight', sans-serif;
+}
+
+.metric-subtext {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  font-weight: 600;
+  font-family: 'Inter Tight', sans-serif;
+}
+
+/* Machine Stats Detail */
+.machine-stats-detail {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  padding-top: 2rem;
+  border-top: 2px solid rgba(42, 63, 157, 0.08);
+}
+
+@media (max-width: 768px) {
+  .machine-stats-detail {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+.stat-detail-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.3) 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(42, 63, 157, 0.05);
+  transition: all 0.3s ease;
+}
+
+.stat-detail-item:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.6) 100%);
+  border-color: rgba(42, 63, 157, 0.1);
+}
+
+.stat-detail-icon {
+  font-size: 1.75rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+}
+
+.stat-detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.stat-detail-label {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-family: 'Inter Tight', sans-serif;
+  margin: 0;
+}
+
+.stat-detail-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1f2937;
+  font-family: 'Inter Tight', sans-serif;
+  margin: 0;
+}
+
+@media (max-width: 480px) {
+  .machine-selector-dropdown {
+    font-size: 0.95rem;
+    padding: 0.875rem 1rem;
+    padding-right: 2.5rem;
+  }
+
+  .machine-name-detail {
+    font-size: 1.4rem;
+  }
+
+  .machine-metrics-grid {
+    gap: 1rem;
+  }
+
+  .machine-metric-card {
+    padding: 1.5rem;
+  }
+
+  .large-percent {
+    font-size: 1.6rem;
+  }
+
+  .stat-detail-item {
+    padding: 0.75rem;
+  }
+
+  .stat-detail-icon {
+    font-size: 1.4rem;
+  }
+
+  .stat-detail-value {
+    font-size: 1.2rem;
+  }
+}
+
 @media (max-width: 480px) {
   .analytics-container {
     padding: 1rem;

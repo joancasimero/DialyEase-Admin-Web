@@ -282,7 +282,7 @@ const AnalyticsPage = () => {
                   <h3 className="analytics-card-title">Conversion Rate</h3>
                   <p className="analytics-card-value">
                     {appointments.length > 0 
-                      ? Math.round((appointmentsCompleted / appointments.length) * 100) 
+                      ? Math.round((stats.appointmentsCompleted / appointments.length) * 100) 
                       : 0}%
                   </p>
                   <p className="analytics-card-description">Appointment completion rate</p>

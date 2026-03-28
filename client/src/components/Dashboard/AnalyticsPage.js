@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Row, Col, Card, Spinner, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { FiArrowLeft, FiTrendingUp, FiUsers, FiBarChart2, FiCalendar, FiClock, FiCheck } from 'react-icons/fi';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, LineChart, Line } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import api from '../../services/api';
 import moment from 'moment-timezone';
 import './AnalyticsPage.css';

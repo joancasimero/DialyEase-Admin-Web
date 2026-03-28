@@ -16,6 +16,8 @@ const AnalyticsPage = () => {
   const [stats, setStats] = useState({
     totalPatients: 0,
     newPatientsThisMonth: 0,
+    activePatients: 0,
+    inactivePatients: 0,
     totalMachines: 0,
     appointmentsThisMonth: 0,
     appointmentsCompleted: 0,
@@ -78,6 +80,9 @@ const AnalyticsPage = () => {
       return createdAt.isBetween(monthStart, monthEnd);
     }).length;
 
+    const activePatients = patients.filter(p => !p.archived).length;
+    const inactivePatients = patients.filter(p => p.archived).length;
+
     // Appointment stats
     const appointmentsThisMonth = appointments.filter(apt => {
       const aptDate = moment(apt.date);
@@ -104,6 +109,8 @@ const AnalyticsPage = () => {
     setStats({
       totalPatients: patients.length,
       newPatientsThisMonth,
+      activePatients,
+      inactivePatients,
       totalMachines: machines.length,
       appointmentsThisMonth,
       appointmentsCompleted,
@@ -286,6 +293,78 @@ const AnalyticsPage = () => {
                       : 0}%
                   </p>
                   <p className="analytics-card-description">Appointment completion rate</p>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </div>
+
+        {/* Patient Status Section */}
+        <div className="analytics-section">
+          <h2 className="section-title">Patient Status Overview</h2>
+          <Row>
+            <Col lg={6} md={12} className="analytics-col">
+              <Card className="status-overview-card">
+                <Card.Body>
+                  <div className="status-overview-header">
+                    <h3 className="status-overview-title">Active vs Inactive Patients</h3>
+                  </div>
+                  <div className="status-bars">
+                    <div className="status-item-detailed">
+                      <div className="status-label-row">
+                        <span className="status-label">
+                          <span className="status-dot active"></span>
+                          Active Patients
+                        </span>
+                        <span className="status-count">{stats.activePatients}</span>
+                      </div>
+                      <div className="progress-bar-container">
+                        <div className="progress-bar active-bar" style={{width: stats.totalPatients > 0 ? `${(stats.activePatients / stats.totalPatients) * 100}%` : '0%'}}></div>
+                      </div>
+                      <p className="status-percentage">{stats.totalPatients > 0 ? Math.round((stats.activePatients / stats.totalPatients) * 100) : 0}% of total</p>
+                    </div>
+                    <div className="status-item-detailed">
+                      <div className="status-label-row">
+                        <span className="status-label">
+                          <span className="status-dot inactive"></span>
+                          Inactive Patients
+                        </span>
+                        <span className="status-count">{stats.inactivePatients}</span>
+                      </div>
+                      <div className="progress-bar-container">
+                        <div className="progress-bar inactive-bar" style={{width: stats.totalPatients > 0 ? `${(stats.inactivePatients / stats.totalPatients) * 100}%` : '0%'}}></div>
+                      </div>
+                      <p className="status-percentage">{stats.totalPatients > 0 ? Math.round((stats.inactivePatients / stats.totalPatients) * 100) : 0}% of total</p>
+                    </div>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+
+            <Col lg={6} md={12} className="analytics-col">
+              <Card className="patient-status-stats-card">
+                <Card.Body>
+                  <div className="patient-status-stat">
+                    <div className="stat-icon active-icon">
+                      <FiCheck size={24} />
+                    </div>
+                    <div className="stat-info">
+                      <p className="stat-label">Active</p>
+                      <p className="stat-value-large">{stats.activePatients}</p>
+                      <p className="stat-description">Currently enrolled patients</p>
+                    </div>
+                  </div>
+                  <div style={{margin: '1.5rem 0', backgroundColor: 'rgba(0,0,0,0.05)', height: '1px'}}></div>
+                  <div className="patient-status-stat">
+                    <div className="stat-icon inactive-icon">
+                      <FiUsers size={24} />
+                    </div>
+                    <div className="stat-info">
+                      <p className="stat-label">Inactive</p>
+                      <p className="stat-value-large">{stats.inactivePatients}</p>
+                      <p className="stat-description">Archived patients</p>
+                    </div>
+                  </div>
                 </Card.Body>
               </Card>
             </Col>

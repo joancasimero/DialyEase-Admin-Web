@@ -407,6 +407,184 @@
   font-weight: 500;
 }
 
+/* Patient Status Overview Card */
+.status-overview-card {
+  background: #ffffff;
+  border: 1px solid rgba(42, 63, 157, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(42, 63, 157, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.status-overview-card:hover {
+  box-shadow: 0 12px 32px rgba(42, 63, 157, 0.15);
+}
+
+.status-overview-card .card-body {
+  padding: 2rem;
+}
+
+.status-overview-header {
+  margin-bottom: 1.5rem;
+}
+
+.status-overview-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2a3f9d;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.status-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.status-item-detailed {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.status-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.status-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.status-dot.active {
+  background: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+.status-dot.inactive {
+  background: #f59e0b;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+}
+
+.status-count {
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: #1a202c;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  transition: width 0.5s ease-out;
+  border-radius: 10px;
+}
+
+.progress-bar.active-bar {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.progress-bar.inactive-bar {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.status-percentage {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Patient Status Stats Card */
+.patient-status-stats-card {
+  background: #ffffff;
+  border: 1px solid rgba(42, 63, 157, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(42, 63, 157, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.patient-status-stats-card:hover {
+  box-shadow: 0 12px 32px rgba(42, 63, 157, 0.15);
+}
+
+.patient-status-stats-card .card-body {
+  padding: 2rem;
+}
+
+.patient-status-stat {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.stat-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stat-icon.active-icon {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #059669;
+}
+
+.stat-icon.inactive-icon {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #b45309;
+}
+
+.stat-info {
+  flex: 1;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #6b7280;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-value-large {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #1a202c;
+  margin: 0.5rem 0;
+  line-height: 1;
+}
+
+.stat-description {
+  font-size: 0.85rem;
+  color: #a0aec0;
+  margin: 0;
+  font-weight: 500;
+}
+
 /* Animations */
 @keyframes fadeInDown {
   from {

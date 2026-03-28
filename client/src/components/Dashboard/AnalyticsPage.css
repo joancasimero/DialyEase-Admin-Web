@@ -682,25 +682,24 @@
   min-height: 380px;
 }
 
-/* Monthly Patient Registrations Styles */
+/* Monthly Patient Registrations Card */
 .monthly-registrations-card {
   border: none;
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(74, 108, 247, 0.1);
+  box-shadow: 0 4px 12px rgba(42, 63, 157, 0.1);
   transition: all 0.3s ease;
   overflow: hidden;
-  background: linear-gradient(135deg, #f8f9ff 0%, #f1f5ff 100%);
-  border-top: 4px solid #4a6cf7;
+  background: linear-gradient(135deg, #ffffff 0%, #f9fbff 100%);
 }
 
 .monthly-registrations-card:hover {
-  box-shadow: 0 8px 24px rgba(74, 108, 247, 0.15);
+  box-shadow: 0 8px 24px rgba(42, 63, 157, 0.15);
   transform: translateY(-2px);
 }
 
 .monthly-registrations-card .card-body {
   padding: 2.5rem;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 249, 255, 0.95) 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%);
 }
 
 .monthly-chart-container {
@@ -708,7 +707,54 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  min-height: 380px;
+  min-height: 450px;
+  margin-bottom: 2rem;
+}
+
+.monthly-stats-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f0f4ff 0%, #f9f5ff 100%);
+  border-radius: 12px;
+  border: 2px solid rgba(42, 63, 157, 0.1);
+  margin-top: 1.5rem;
+}
+
+.summary-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.5rem 0;
+  font-family: 'Inter Tight', sans-serif;
+}
+
+.summary-value {
+  font-size: 2.5rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #2a3f9d 0%, #4a6cf7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  font-family: 'Inter Tight', sans-serif;
+}
+
+@media (max-width: 768px) {
+  .monthly-chart-container {
+    min-height: 350px;
+  }
+
+  .monthly-registrations-card .card-body {
+    padding: 1.5rem;
+  }
+
+  .summary-value {
+    font-size: 2rem;
+  }
 }
 
 @media (max-width: 768px) {
@@ -763,14 +809,6 @@
   }
 
   .age-chart-container {
-    min-height: 320px;
-  }
-
-  .monthly-registrations-card .card-body {
-    padding: 1.5rem;
-  }
-
-  .monthly-chart-container {
     min-height: 320px;
   }
 

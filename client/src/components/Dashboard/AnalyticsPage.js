@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Row, Col, Card, Spinner, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { FiArrowLeft, FiTrendingUp, FiUsers, FiBarChart2, FiCalendar, FiClock, FiCheck } from 'react-icons/fi';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, LineChart, Line } from 'recharts';
 import api from '../../services/api';
 import moment from 'moment-timezone';
 import './AnalyticsPage.css';
@@ -40,7 +40,7 @@ const AnalyticsPage = () => {
       '60+': 0
     },
     machineUtilization: [],
-    monthlyPatientRegistrations: []
+    monthlyRegistrations: []
   });
 
   const [selectedMachineId, setSelectedMachineId] = useState(null);
@@ -173,24 +173,6 @@ const AnalyticsPage = () => {
       }
     });
 
-    // Monthly patient registrations calculation (last 12 months)
-    const monthlyPatientRegistrations = [];
-    for (let i = 11; i >= 0; i--) {
-      const monthStart = moment().tz('Asia/Manila').subtract(i, 'months').startOf('month');
-      const monthEnd = moment().tz('Asia/Manila').subtract(i, 'months').endOf('month');
-      
-      const monthlyCount = patients.filter(p => {
-        const createdAt = moment(p.createdAt);
-        return createdAt.isBetween(monthStart, monthEnd);
-      }).length;
-      
-      monthlyPatientRegistrations.push({
-        month: moment().tz('Asia/Manila').subtract(i, 'months').format('MMM'),
-        count: monthlyCount,
-        fullDate: moment().tz('Asia/Manila').subtract(i, 'months').format('MMMM YYYY')
-      });
-    }
-
     // Machine utilization calculation
     const todays = now.format('YYYY-MM-DD');
     const machineUtilization = machines.map(machine => {
@@ -222,6 +204,23 @@ const AnalyticsPage = () => {
       return numA - numB;
     });
 
+    // Monthly patient registrations for the last 12 months
+    const monthlyRegistrations = [];
+    for (let i = 11; i >= 0; i--) {
+      const monthDate = moment().tz('Asia/Manila').subtract(i, 'months');
+      const monthStart = monthDate.clone().startOf('month');
+      const monthEnd = monthDate.clone().endOf('month');
+      const count = patients.filter(p => {
+        const createdAt = moment(p.createdAt);
+        return createdAt.isBetween(monthStart, monthEnd, null, '[]');
+      }).length;
+      monthlyRegistrations.push({
+        month: monthDate.format('MMM YYYY'),
+        count: count,
+        shortMonth: monthDate.format('MMM')
+      });
+    }
+
     setStats({
       totalPatients: patients.length,
       newPatientsThisMonth,
@@ -241,7 +240,7 @@ const AnalyticsPage = () => {
       machineAvailability,
       ageGroups,
       machineUtilization,
-      monthlyPatientRegistrations
+      monthlyRegistrations
     });
   }, [patients, machines, appointments, attendance]);
 
@@ -489,40 +488,43 @@ const AnalyticsPage = () => {
 
         {/* Monthly Patient Registrations Section */}
         <div className="analytics-section">
-          <h2 className="section-title">New Patient Registrations - Monthly Trend</h2>
+          <h2 className="section-title">Monthly Patient Registrations</h2>
           <Row>
             <Col lg={12} className="analytics-col">
               <Card className="monthly-registrations-card">
                 <Card.Body>
                   <div className="monthly-chart-container">
-                    <ResponsiveContainer width="100%" height={350}>
+                    <ResponsiveContainer width="100%" height={400}>
                       <BarChart
-                        data={stats.monthlyPatientRegistrations}
-                        margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                        data={stats.monthlyRegistrations}
+                        margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
                       >
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(42, 63, 157, 0.1)" />
                         <XAxis 
-                          dataKey="month" 
+                          dataKey="shortMonth" 
                           stroke="#6b7280"
-                          style={{ fontSize: '0.9rem', fontWeight: '600' }}
+                          style={{ fontSize: '0.85rem', fontWeight: '600' }}
+                          angle={-45}
+                          textAnchor="end"
+                          height={80}
                         />
                         <YAxis 
                           stroke="#6b7280"
                           style={{ fontSize: '0.9rem' }}
-                          label={{ value: 'New Patients', angle: -90, position: 'insideLeft' }}
+                          label={{ value: 'Number of Patients', angle: -90, position: 'insideLeft', offset: 10 }}
                         />
                         <Tooltip
                           contentStyle={{
                             backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                            border: '2px solid #4a6cf7',
+                            border: '2px solid #2a3f9d',
                             borderRadius: '8px',
                             padding: '12px'
                           }}
                           labelStyle={{ color: '#1f2937', fontWeight: '700' }}
-                          formatter={(value) => [`${value} new patients`, 'Registrations']}
+                          formatter={(value) => [value, 'New Patients']}
                           labelFormatter={(label) => {
-                            const monthData = stats.monthlyPatientRegistrations.find(m => m.month === label);
-                            return monthData ? monthData.fullDate : label;
+                            const monthData = stats.monthlyRegistrations.find(m => m.shortMonth === label);
+                            return monthData ? monthData.month : label;
                           }}
                         />
                         <Bar 
@@ -530,9 +532,14 @@ const AnalyticsPage = () => {
                           fill="#4a6cf7"
                           radius={[8, 8, 0, 0]}
                           animationDuration={800}
+                          name="New Patients"
                         />
                       </BarChart>
                     </ResponsiveContainer>
+                  </div>
+                  <div className="monthly-stats-summary">
+                    <p className="summary-label">Total Registrations (Last 12 Months)</p>
+                    <p className="summary-value">{stats.totalPatients}</p>
                   </div>
                 </Card.Body>
               </Card>

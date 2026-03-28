@@ -1370,7 +1370,7 @@ const PatientsPage = () => {
                   </Col>
                   <Col md={4}>
                     <Form.Group controlId="hospital" className="mb-3">
-                      <Form.Label style={{ color: "#263a99", fontWeight: 600 }}>Hospital *</Form.Label>
+                      <Form.Label style={{ color: "#263a99", fontWeight: 600 }}>Referred By *</Form.Label>
                       <Form.Control
                         name="hospital"
                         value={editPatient.hospital || ""}
@@ -1762,7 +1762,7 @@ const PatientsPage = () => {
                       borderRadius: "12px",
                       border: "1px solid #e2e8f0"
                     }}>
-                      <strong style={{ color: "#64748b", fontSize: "0.8rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>Hospital</strong>
+                      <strong style={{ color: "#64748b", fontSize: "0.8rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>Referred By</strong>
                       <div style={{ color: "#2a3f9d", fontWeight: 600, marginTop: "0.25rem" }}>
                         {viewPatient.hospital}
                       </div>

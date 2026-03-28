@@ -20,6 +20,8 @@ const PatientsPage = () => {
   // eslint-disable-next-line no-unused-vars
   const [showArchived, setShowArchived] = useState(false); 
   const [searchTerm, setSearchTerm] = useState("");
+  const [comorbiditySearch, setComorbiditySearch] = useState("");
+  const [hospitalSearch, setHospitalSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [patientsPerPage] = useState(20);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -71,16 +73,37 @@ const PatientsPage = () => {
   };
 
   // Filter patients by search term
-  const searchFilteredPatients = patients.filter((patient) =>
-    `${patient.firstName} ${patient.middleName || ""} ${patient.lastName}`
+  const searchFilteredPatients = patients.filter((patient) => {
+    const nameMatch = `${patient.firstName} ${patient.middleName || ""} ${patient.lastName}`
       .toLowerCase()
-      .includes(searchTerm.toLowerCase())
-  );
+      .includes(searchTerm.toLowerCase());
+    
+    // If search term is empty, pass all patients
+    if (!searchTerm) return true;
+    return nameMatch;
+  });
+
+  // Filter by comorbidity/medical history
+  const comorbidityFilteredPatients = comorbiditySearch
+    ? searchFilteredPatients.filter(p => {
+        const medicalHistory = (p.medicalHistory || "").toLowerCase();
+        const medications = (p.currentMedications || []).join(" ").toLowerCase();
+        const combined = `${medicalHistory} ${medications}`;
+        return combined.includes(comorbiditySearch.toLowerCase());
+      })
+    : searchFilteredPatients;
+
+  // Filter by hospital (referred by)
+  const hospitalFilteredPatients = hospitalSearch
+    ? comorbidityFilteredPatients.filter(p =>
+        (p.hospital || "").toLowerCase().includes(hospitalSearch.toLowerCase())
+      )
+    : comorbidityFilteredPatients;
 
   // Filter by schedule
   const scheduleFilteredPatients = scheduleFilter
-    ? searchFilteredPatients.filter(p => p.dialysisSchedule === scheduleFilter)
-    : searchFilteredPatients;
+    ? hospitalFilteredPatients.filter(p => p.dialysisSchedule === scheduleFilter)
+    : hospitalFilteredPatients;
 
   // Helper function to calculate age from birthday
   const calculateAge = (birthday) => {
@@ -482,49 +505,152 @@ const PatientsPage = () => {
               marginBottom: "1.5rem",
             }}
           >
-            <Form.Group controlId="search" style={{ marginBottom: 0 }}>
-              <div
-                style={{
-                  position: "relative",
-                  display: "flex",
-                  alignItems: "center",
-                  background: "#f8fafc",
-                  borderRadius: "12px",
-                  border: "2px solid rgba(42, 63, 157, 0.1)",
-                  padding: "0.75rem 1rem",
-                  transition: "all 0.2s ease",
-                }}
-              >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  style={{ marginRight: "0.75rem", flexShrink: 0 }}
-                >
-                  <circle cx="11" cy="11" r="8" stroke="#4a6cf7" strokeWidth="2"/>
-                  <path d="M21 21l-4.35-4.35" stroke="#4a6cf7" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-                <Form.Control
-                  type="text"
-                  placeholder="Search patients by name..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  style={{
-                    border: "none",
-                    background: "transparent",
-                    boxShadow: "none",
-                    outline: "none",
-                    fontSize: "1rem",
-                    padding: 0,
-                    color: "#2a3f9d",
-                    fontWeight: 600,
-                    fontFamily: "'Inter Tight', sans-serif",
-                  }}
-                />
-              </div>
-            </Form.Group>
+            <Row className="g-3">
+              <Col md={4}>
+                <Form.Group controlId="search" style={{ marginBottom: 0 }}>
+                  <label style={{ fontSize: "0.85rem", fontWeight: 700, color: "#6b7280", marginBottom: "0.5rem", display: "block", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    Search by Name
+                  </label>
+                  <div
+                    style={{
+                      position: "relative",
+                      display: "flex",
+                      alignItems: "center",
+                      background: "#f8fafc",
+                      borderRadius: "12px",
+                      border: "2px solid rgba(42, 63, 157, 0.1)",
+                      padding: "0.75rem 1rem",
+                      transition: "all 0.2s ease",
+                    }}
+                  >
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      style={{ marginRight: "0.75rem", flexShrink: 0 }}
+                    >
+                      <circle cx="11" cy="11" r="8" stroke="#4a6cf7" strokeWidth="2"/>
+                      <path d="M21 21l-4.35-4.35" stroke="#4a6cf7" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter patient name..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      style={{
+                        border: "none",
+                        background: "transparent",
+                        boxShadow: "none",
+                        outline: "none",
+                        fontSize: "0.95rem",
+                        padding: 0,
+                        color: "#2a3f9d",
+                        fontWeight: 600,
+                        fontFamily: "'Inter Tight', sans-serif",
+                      }}
+                    />
+                  </div>
+                </Form.Group>
+              </Col>
+              <Col md={4}>
+                <Form.Group controlId="comorbiditySearch" style={{ marginBottom: 0 }}>
+                  <label style={{ fontSize: "0.85rem", fontWeight: 700, color: "#6b7280", marginBottom: "0.5rem", display: "block", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    Search by Comorbidity
+                  </label>
+                  <div
+                    style={{
+                      position: "relative",
+                      display: "flex",
+                      alignItems: "center",
+                      background: "#f8fafc",
+                      borderRadius: "12px",
+                      border: "2px solid rgba(42, 63, 157, 0.1)",
+                      padding: "0.75rem 1rem",
+                      transition: "all 0.2s ease",
+                    }}
+                  >
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      style={{ marginRight: "0.75rem", flexShrink: 0 }}
+                    >
+                      <path d="M12 2L15.09 8.26H22L17.55 12.5L18.91 18.76L12 14.5L5.09 18.76L6.45 12.5L2 8.26H8.91L12 2Z" fill="none" stroke="#4a6cf7" strokeWidth="2"/>
+                    </svg>
+                    <Form.Control
+                      type="text"
+                      placeholder="e.g., Diabetes, Hypertension..."
+                      value={comorbiditySearch}
+                      onChange={(e) => setComorbiditySearch(e.target.value)}
+                      style={{
+                        border: "none",
+                        background: "transparent",
+                        boxShadow: "none",
+                        outline: "none",
+                        fontSize: "0.95rem",
+                        padding: 0,
+                        color: "#2a3f9d",
+                        fontWeight: 600,
+                        fontFamily: "'Inter Tight', sans-serif",
+                      }}
+                    />
+                  </div>
+                </Form.Group>
+              </Col>
+              <Col md={4}>
+                <Form.Group controlId="hospitalSearch" style={{ marginBottom: 0 }}>
+                  <label style={{ fontSize: "0.85rem", fontWeight: 700, color: "#6b7280", marginBottom: "0.5rem", display: "block", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    Search by Hospital/Referred By
+                  </label>
+                  <div
+                    style={{
+                      position: "relative",
+                      display: "flex",
+                      alignItems: "center",
+                      background: "#f8fafc",
+                      borderRadius: "12px",
+                      border: "2px solid rgba(42, 63, 157, 0.1)",
+                      padding: "0.75rem 1rem",
+                      transition: "all 0.2s ease",
+                    }}
+                  >
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      style={{ marginRight: "0.75rem", flexShrink: 0 }}
+                    >
+                      <path d="M12 2L3 7V10H21V7L12 2Z" stroke="#4a6cf7" strokeWidth="2" fill="none"/>
+                      <path d="M3 10V20C3 20.5304 3.21071 21.0391 3.58579 21.4142C3.96086 21.7893 4.46957 22 5 22H19C19.5304 22 20.0391 21.7893 20.4142 21.4142C20.7893 21.0391 21 20.5304 21 20V10" stroke="#4a6cf7" strokeWidth="2"/>
+                      <path d="M9 14H15" stroke="#4a6cf7" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter hospital name..."
+                      value={hospitalSearch}
+                      onChange={(e) => setHospitalSearch(e.target.value)}
+                      style={{
+                        border: "none",
+                        background: "transparent",
+                        boxShadow: "none",
+                        outline: "none",
+                        fontSize: "0.95rem",
+                        padding: 0,
+                        color: "#2a3f9d",
+                        fontWeight: 600,
+                        fontFamily: "'Inter Tight', sans-serif",
+                      }}
+                    />
+                  </div>
+                </Form.Group>
+              </Col>
+            </Row>
           </div>
 
           {/* Sort and Filter Section */}

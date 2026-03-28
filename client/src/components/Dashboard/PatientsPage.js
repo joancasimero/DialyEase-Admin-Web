@@ -37,7 +37,7 @@ const PatientsPage = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [sortBy, setSortBy] = useState("name"); // "name", "schedule"
+  const [sortBy, setSortBy] = useState("name"); // "name", "schedule", "age"
   const [scheduleFilter, setScheduleFilter] = useState(""); // "", "MWF", "TTHS" 
 
   useEffect(() => {
@@ -82,6 +82,18 @@ const PatientsPage = () => {
     ? searchFilteredPatients.filter(p => p.dialysisSchedule === scheduleFilter)
     : searchFilteredPatients;
 
+  // Helper function to calculate age from birthday
+  const calculateAge = (birthday) => {
+    const today = new Date();
+    const birthDate = new Date(birthday);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
   // Sort patients
   const sortedPatients = [...scheduleFilteredPatients].sort((a, b) => {
     if (sortBy === "schedule") {
@@ -93,6 +105,11 @@ const PatientsPage = () => {
       const nameA = `${a.firstName} ${a.lastName}`.toLowerCase();
       const nameB = `${b.firstName} ${b.lastName}`.toLowerCase();
       return nameA.localeCompare(nameB);
+    } else if (sortBy === "age") {
+      // Sort by age (ascending: youngest to oldest)
+      const ageA = calculateAge(a.birthday);
+      const ageB = calculateAge(b.birthday);
+      return ageA - ageB;
     } else {
       // Sort alphabetically by name
       const nameA = `${a.firstName} ${a.lastName}`.toLowerCase();
@@ -565,6 +582,7 @@ const PatientsPage = () => {
                     >
                       <option value="name">Alphabetical (A-Z)</option>
                       <option value="schedule">Dialysis Schedule</option>
+                      <option value="age">Age (Youngest to Oldest)</option>
                     </Form.Select>
                   </div>
                 </div>

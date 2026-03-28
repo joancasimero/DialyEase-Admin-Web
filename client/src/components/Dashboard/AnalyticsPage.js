@@ -687,7 +687,7 @@ const AnalyticsPage = () => {
         {/* Dialysis Frequency & Adherence Section */}
         <div className="analytics-section">
           <h2 className="section-title">Dialysis Frequency & Adherence Metrics</h2>
-          <Row className="adherence-metrics-grid">
+          <Row>
             {/* No-Show Rate */}
             <Col lg={3} md={6} sm={12} className="adherence-col">
               <Card className="adherence-card no-show-card">

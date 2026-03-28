@@ -12,6 +12,7 @@ const AnalyticsPage = () => {
   const [patients, setPatients] = useState([]);
   const [machines, setMachines] = useState([]);
   const [appointments, setAppointments] = useState([]);
+  const [attendance, setAttendance] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [stats, setStats] = useState({
@@ -25,6 +26,12 @@ const AnalyticsPage = () => {
     appointmentsPending: 0,
     avgAppointmentsPerDay: 0,
     occupancyRate: 0,
+    noShowRate: 0,
+    cancellationRate: 0,
+    completionRate: 0,
+    adherenceRate: 0,
+    machineAvailability: 0,
+    appointmentsCancelled: 0,
     ageGroups: {
       '18-30': 0,
       '31-40': 0,
@@ -70,13 +77,24 @@ const AnalyticsPage = () => {
 
   const fetchAppointments = useCallback(async () => {
     try {
-      const response = await api.get('/appointment-slots', {
+      const res = await api.get('/appointment-slots', {
         headers: getAuthHeader()
       });
-      setAppointments(response.data || []);
+      setAppointments(res.data || []);
     } catch (err) {
       console.error('Error fetching appointments:', err);
       setError('Failed to load appointment data');
+    }
+  }, []);
+
+  const fetchAttendance = useCallback(async () => {
+    try {
+      const res = await api.get('/attendance', {
+        headers: getAuthHeader()
+      });
+      setAttendance(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error('Error fetching attendance:', err);
     }
   }, []);
 
@@ -107,6 +125,21 @@ const AnalyticsPage = () => {
     const appointmentsPending = appointments.filter(apt => {
       return apt.status === 'pending' || apt.status === 'scheduled';
     }).length;
+
+    const appointmentsCancelled = appointments.filter(apt => {
+      return apt.status === 'cancelled';
+    }).length;
+
+    // Dialysis frequency and adherence metrics
+    const noShowCount = attendance.filter(att => att.status === 'absent').length;
+    const presentCount = attendance.filter(att => att.status === 'present').length;
+    const totalAttendance = attendance.length;
+    
+    const noShowRate = totalAttendance > 0 ? Math.round((noShowCount / totalAttendance) * 100) : 0;
+    const cancellationRate = appointmentsThisMonth > 0 ? Math.round((appointmentsCancelled / appointmentsThisMonth) * 100) : 0;
+    const completionRate = appointments.length > 0 ? Math.round((appointmentsCompleted / appointments.length) * 100) : 0;
+    const adherenceRate = totalAttendance > 0 ? Math.round((presentCount / totalAttendance) * 100) : 0;
+    const machineAvailability = machines.length > 0 ? Math.round((machines.filter(m => m.isActive).length / machines.length) * 100) : 0;
 
     // Average appointments per day (this month)
     const daysInMonth = now.daysInMonth();
@@ -179,18 +212,24 @@ const AnalyticsPage = () => {
       appointmentsThisMonth,
       appointmentsCompleted,
       appointmentsPending,
+      appointmentsCancelled,
       avgAppointmentsPerDay: avgAppointmentsPerDay.toFixed(1),
       occupancyRate,
+      noShowRate,
+      cancellationRate,
+      completionRate,
+      adherenceRate,
+      machineAvailability,
       ageGroups,
       machineUtilization
     });
-  }, [patients, machines, appointments]);
+  }, [patients, machines, appointments, attendance]);
 
   useEffect(() => {
     const loadData = async () => {
       try {
         setLoading(true);
-        await Promise.all([fetchPatients(), fetchMachines(), fetchAppointments()]);
+        await Promise.all([fetchPatients(), fetchMachines(), fetchAppointments(), fetchAttendance()]);
       } catch (err) {
         console.error('Error loading analytics data:', err);
         setError('Failed to load analytics data');
@@ -199,11 +238,17 @@ const AnalyticsPage = () => {
       }
     };
     loadData();
-  }, [fetchPatients, fetchMachines, fetchAppointments]);
+}, [fetchPatients, fetchMachines, fetchAppointments, fetchAttendance]);
 
   useEffect(() => {
     calculateStats();
   }, [calculateStats]);
+
+  useEffect(() => {
+    if (stats.machineUtilization.length > 0 && !selectedMachineId) {
+      setSelectedMachineId(stats.machineUtilization[0]._id);
+    }
+  }, [stats.machineUtilization, selectedMachineId]);
 
   useEffect(() => {
     if (stats.machineUtilization.length > 0 && !selectedMachineId) {
@@ -633,6 +678,122 @@ const AnalyticsPage = () => {
                       </div>
                     ) : null;
                   })()}
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </div>
+
+        {/* Dialysis Frequency & Adherence Section */}
+        <div className="analytics-section">
+          <h2 className="section-title">Dialysis Frequency & Adherence Metrics</h2>
+          <Row className="adherence-metrics-grid">
+            {/* No-Show Rate */}
+            <Col lg={3} md={6} sm={12} className="adherence-col">
+              <Card className="adherence-card no-show-card">
+                <Card.Body>
+                  <div className="adherence-header">
+                    <div className="adherence-icon no-show-icon">
+                      ⚠️
+                    </div>
+                    <h3 className="adherence-card-title">No-Show Rate</h3>
+                  </div>
+                  <p className="adherence-card-value">{stats.noShowRate}%</p>
+                  <p className="adherence-card-description">Missed scheduled appointments</p>
+                  <div className="adherence-bar">
+                    <div 
+                      className="adherence-bar-fill no-show-fill"
+                      style={{width: `${stats.noShowRate}%`}}
+                    ></div>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+
+            {/* Cancellation Rate */}
+            <Col lg={3} md={6} sm={12} className="adherence-col">
+              <Card className="adherence-card cancellation-card">
+                <Card.Body>
+                  <div className="adherence-header">
+                    <div className="adherence-icon cancellation-icon">
+                      ❌
+                    </div>
+                    <h3 className="adherence-card-title">Cancellation Rate</h3>
+                  </div>
+                  <p className="adherence-card-value">{stats.cancellationRate}%</p>
+                  <p className="adherence-card-description">Cancelled appointments</p>
+                  <div className="adherence-bar">
+                    <div 
+                      className="adherence-bar-fill cancellation-fill"
+                      style={{width: `${stats.cancellationRate}%`}}
+                    ></div>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+
+            {/* Adherence Rate */}
+            <Col lg={3} md={6} sm={12} className="adherence-col">
+              <Card className="adherence-card adherence-card-highlight">
+                <Card.Body>
+                  <div className="adherence-header">
+                    <div className="adherence-icon adherence-icon-success">
+                      ✅
+                    </div>
+                    <h3 className="adherence-card-title">Adherence Rate</h3>
+                  </div>
+                  <p className="adherence-card-value">{stats.adherenceRate}%</p>
+                  <p className="adherence-card-description">Actual attendances vs scheduled</p>
+                  <div className="adherence-bar">
+                    <div 
+                      className="adherence-bar-fill adherence-fill"
+                      style={{width: `${stats.adherenceRate}%`}}
+                    ></div>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+
+            {/* Completion Rate */}
+            <Col lg={3} md={6} sm={12} className="adherence-col">
+              <Card className="adherence-card completion-card">
+                <Card.Body>
+                  <div className="adherence-header">
+                    <div className="adherence-icon completion-icon">
+                      🎯
+                    </div>
+                    <h3 className="adherence-card-title">Completion Rate</h3>
+                  </div>
+                  <p className="adherence-card-value">{stats.completionRate}%</p>
+                  <p className="adherence-card-description">Successfully completed sessions</p>
+                  <div className="adherence-bar">
+                    <div 
+                      className="adherence-bar-fill completion-fill"
+                      style={{width: `${stats.completionRate}%`}}
+                    ></div>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+
+            {/* Machine Availability */}
+            <Col lg={3} md={6} sm={12} className="adherence-col">
+              <Card className="adherence-card availability-card">
+                <Card.Body>
+                  <div className="adherence-header">
+                    <div className="adherence-icon availability-icon">
+                      ⚙️
+                    </div>
+                    <h3 className="adherence-card-title">Machine Availability</h3>
+                  </div>
+                  <p className="adherence-card-value">{stats.machineAvailability}%</p>
+                  <p className="adherence-card-description">Operational machines</p>
+                  <div className="adherence-bar">
+                    <div 
+                      className="adherence-bar-fill availability-fill"
+                      style={{width: `${stats.machineAvailability}%`}}
+                    ></div>
+                  </div>
                 </Card.Body>
               </Card>
             </Col>

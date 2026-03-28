@@ -1220,6 +1220,239 @@
   }
 }
 
+/* Dialysis Frequency & Adherence Metrics */
+.adherence-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.adherence-col {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.adherence-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f9fbff 100%);
+  border: 2px solid rgba(42, 63, 157, 0.1);
+  border-radius: 14px;
+  padding: 1.75rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.adherence-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #2a3f9d 0%, #4a6cf7 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.adherence-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(42, 63, 157, 0.15);
+  border-color: rgba(42, 63, 157, 0.2);
+}
+
+.adherence-card:hover::before {
+  opacity: 1;
+}
+
+.no-show-card {
+  border-left: 5px solid #f87171;
+}
+
+.no-show-card:hover {
+  background: linear-gradient(135deg, #fff5f5 0%, #fef2f2 100%);
+}
+
+.cancellation-card {
+  border-left: 5px solid #fb923c;
+}
+
+.cancellation-card:hover {
+  background: linear-gradient(135deg, #fffbf5 0%, #fef3f0 100%);
+}
+
+.adherence-card-highlight {
+  border-left: 5px solid #10b981;
+  background: linear-gradient(135deg, #f0fdf4 0%, #f9fded 100%);
+}
+
+.adherence-card-highlight:hover {
+  background: linear-gradient(135deg, #ecfdf5 0%, #f6fef8 100%);
+}
+
+.completion-card {
+  border-left: 5px solid #3b82f6;
+}
+
+.completion-card:hover {
+  background: linear-gradient(135deg, #f0f9ff 0%, #f9fcfe 100%);
+}
+
+.availability-card {
+  border-left: 5px solid #8b5cf6;
+}
+
+.availability-card:hover {
+  background: linear-gradient(135deg, #faf5ff 0%, #f9f5fe 100%);
+}
+
+.adherence-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.adherence-icon {
+  font-size: 2rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  min-height: 48px;
+  background: linear-gradient(135deg, #f8f9ff 0%, #f1f5ff 100%);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.adherence-card:hover .adherence-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.adherence-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+  font-family: 'Inter Tight', sans-serif;
+  flex: 1;
+}
+
+.adherence-card-value {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #1f2937;
+  margin: 0.75rem 0 0.5rem 0;
+  font-family: 'Inter Tight', sans-serif;
+  background: linear-gradient(135deg, #2a3f9d 0%, #4a6cf7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.adherence-card-description {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  margin: 0 0 1rem 0;
+  font-weight: 500;
+  font-family: 'Inter Tight', sans-serif;
+}
+
+.adherence-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 1rem;
+}
+
+.adherence-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.no-show-fill {
+  background: linear-gradient(90deg, #f87171 0%, #ef4444 100%);
+}
+
+.cancellation-fill {
+  background: linear-gradient(90deg, #fb923c 0%, #f97316 100%);
+}
+
+.adherence-fill {
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+}
+
+.completion-fill {
+  background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.availability-fill {
+  background: linear-gradient(90deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+@media (max-width: 992px) {
+  .adherence-metrics-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .adherence-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .adherence-card {
+    padding: 1.5rem;
+  }
+
+  .adherence-card-value {
+    font-size: 2rem;
+  }
+
+  .adherence-icon {
+    font-size: 1.75rem;
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .adherence-metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .adherence-card {
+    padding: 1.25rem;
+  }
+
+  .adherence-card-value {
+    font-size: 1.75rem;
+  }
+
+  .adherence-card-title {
+    font-size: 0.95rem;
+  }
+
+  .adherence-card-description {
+    font-size: 0.8rem;
+  }
+}
+
 @media (max-width: 480px) {
   .analytics-container {
     padding: 1rem;

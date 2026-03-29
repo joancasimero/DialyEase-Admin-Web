@@ -379,71 +379,43 @@ const AnalyticsPage = () => {
         {/* Key Metrics Section */}
         <div className="metrics-section">
           <h2 className="section-title">Key Performance Metrics</h2>
-          <Row className="metrics-grid">
+          <div className="metrics-grid-simple">
             {/* Total Patients Card */}
-            <Col lg={3} md={6} sm={12} className="metric-col">
-              <Card className="metric-card">
-                <Card.Body>
-                  <div className="metric-icon patients-icon">
-                    <FiUsers size={28} />
-                  </div>
-                  <div className="metric-content">
-                    <h3 className="metric-value">{stats.totalPatients}</h3>
-                    <p className="metric-label">Total Patients</p>
-                    <p className="metric-subtext">+{stats.newPatientsThisMonth} this month</p>
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
+            <div className="metric-box">
+              <div className="metric-box-icon patients-icon">
+                <FiUsers size={32} />
+              </div>
+              <div className="metric-box-value">{stats.totalPatients}</div>
+              <div className="metric-box-label">Total Patients</div>
+            </div>
 
             {/* Total Machines Card */}
-            <Col lg={3} md={6} sm={12} className="metric-col">
-              <Card className="metric-card">
-                <Card.Body>
-                  <div className="metric-icon machines-icon">
-                    <FiBarChart2 size={28} />
-                  </div>
-                  <div className="metric-content">
-                    <h3 className="metric-value">{stats.totalMachines}</h3>
-                    <p className="metric-label">Available Machines</p>
-                    <p className="metric-subtext">All operational</p>
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
+            <div className="metric-box">
+              <div className="metric-box-icon machines-icon">
+                <FiBarChart2 size={32} />
+              </div>
+              <div className="metric-box-value">{stats.totalMachines}</div>
+              <div className="metric-box-label">Available Machines</div>
+            </div>
 
             {/* Appointments This Month Card */}
-            <Col lg={3} md={6} sm={12} className="metric-col">
-              <Card className="metric-card">
-                <Card.Body>
-                  <div className="metric-icon appointments-icon">
-                    <FiCalendar size={28} />
-                  </div>
-                  <div className="metric-content">
-                    <h3 className="metric-value">{stats.appointmentsThisMonth}</h3>
-                    <p className="metric-label">Appointments This Month</p>
-                    <p className="metric-subtext">{stats.avgAppointmentsPerDay}/day avg</p>
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
+            <div className="metric-box">
+              <div className="metric-box-icon appointments-icon">
+                <FiCalendar size={32} />
+              </div>
+              <div className="metric-box-value">{stats.appointmentsThisMonth}</div>
+              <div className="metric-box-label">Appointments</div>
+            </div>
 
             {/* Occupancy Rate Card */}
-            <Col lg={3} md={6} sm={12} className="metric-col">
-              <Card className="metric-card">
-                <Card.Body>
-                  <div className="metric-icon occupancy-icon">
-                    <FiTrendingUp size={28} />
-                  </div>
-                  <div className="metric-content">
-                    <h3 className="metric-value">{stats.occupancyRate}%</h3>
-                    <p className="metric-label">Occupancy Rate</p>
-                    <p className="metric-subtext">Completion ratio</p>
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
+            <div className="metric-box">
+              <div className="metric-box-icon occupancy-icon">
+                <FiTrendingUp size={32} />
+              </div>
+              <div className="metric-box-value">{stats.occupancyRate}%</div>
+              <div className="metric-box-label">Occupancy Rate</div>
+            </div>
+          </div>
         </div>
 
         {/* Appointment Analytics Section */}

@@ -708,40 +708,6 @@ const AnalyticsPage = () => {
           </Row>
         </div>
 
-        {/* Patient Trends Section */}
-        <div className="analytics-section">
-          <h2 className="section-title">Patient Trends</h2>
-          <Row>
-            <Col lg={12}>
-              <Card className="trends-card">
-                <Card.Body>
-                  <div className="trend-item">
-                    <div className="trend-label">
-                      <FiUsers size={20} />
-                      <span>Active Patients</span>
-                    </div>
-                    <p className="trend-value">{patients.filter(p => p.isActive).length}</p>
-                  </div>
-                  <div className="trend-item">
-                    <div className="trend-label">
-                      <FiTrendingUp size={20} />
-                      <span>New This Month</span>
-                    </div>
-                    <p className="trend-value">+{stats.newPatientsThisMonth}</p>
-                  </div>
-                  <div className="trend-item">
-                    <div className="trend-label">
-                      <FiBarChart2 size={20} />
-                      <span>Total Registered</span>
-                    </div>
-                    <p className="trend-value">{stats.totalPatients}</p>
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-        </div>
-
         {/* Machine Utilization Section */}
         <div className="analytics-section">
           <h2 className="section-title">Machine Utilization Analysis</h2>

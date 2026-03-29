@@ -694,6 +694,7 @@
   align-items: center;
   width: 100%;
   min-height: 380px;
+  flex: 1;
 }
 
 @media (max-width: 768px) {
@@ -746,6 +747,10 @@
   .analytics-cards-container {
     grid-template-columns: repeat(2, 1fr);
     gap: 1.25rem;
+  }
+
+  .demographics-card .card-body {
+    min-height: 420px;
   }
 
   .age-demographics-card .card-body {
@@ -1688,7 +1693,6 @@
   }
 }
 
-/* Demographics Card Styles */
 .demographics-card {
   border: none;
   border-radius: 14px;
@@ -1696,6 +1700,8 @@
   transition: all 0.3s ease;
   overflow: hidden;
   background: linear-gradient(135deg, #ffffff 0%, #f9fbff 100%);
+  display: flex;
+  flex-direction: column;
 }
 
 .demographics-card:hover {
@@ -1706,6 +1712,9 @@
 .demographics-card .card-body {
   padding: 2rem;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%);
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
 }
 
 .demographics-subtitle {
@@ -1713,6 +1722,7 @@
   font-weight: 700;
   color: #1f2937;
   margin-bottom: 1.5rem;
+  margin-top: 0;
   font-family: 'Inter Tight', sans-serif;
 }
 
@@ -1721,6 +1731,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+  flex: 1;
 }
 
 .gender-item {
@@ -1747,8 +1758,7 @@
 
 .gender-count {
   font-size: 1.1rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, #2a3f9d 0%, #4a6cf7 100%);
+  font-weight: 700;  background: linear-gradient(135deg, #2a3f9d 0%, #4a6cf7 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1922,6 +1932,7 @@
 @media (max-width: 480px) {
   .demographics-card .card-body {
     padding: 1.5rem;
+    min-height: 380px;
   }
 
   .gender-item {

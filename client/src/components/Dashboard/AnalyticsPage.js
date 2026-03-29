@@ -356,6 +356,26 @@ const AnalyticsPage = () => {
           </Alert>
         )}
 
+        {/* System Status */}
+        <div className="analytics-section">
+          <h2 className="section-title">System Status</h2>
+          <Row>
+            <Col lg={12}>
+              <Card className="status-card">
+                <Card.Body>
+                  <div className="status-info">
+                    <div className="status-item">
+                      <div className="status-indicator success"></div>
+                      <span>All Systems Operational</span>
+                    </div>
+                    <p className="status-details">Last updated: {moment().tz('Asia/Manila').format('MMMM D, YYYY h:mm A')}</p>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </div>
+
         {/* Key Metrics Section */}
         <div className="metrics-section">
           <h2 className="section-title">Key Performance Metrics</h2>
@@ -928,26 +948,6 @@ const AnalyticsPage = () => {
                       className="adherence-bar-fill availability-fill"
                       style={{width: `${stats.machineAvailability}%`}}
                     ></div>
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-        </div>
-
-        {/* System Status */}
-        <div className="analytics-section">
-          <h2 className="section-title">System Status</h2>
-          <Row>
-            <Col lg={12}>
-              <Card className="status-card">
-                <Card.Body>
-                  <div className="status-info">
-                    <div className="status-item">
-                      <div className="status-indicator success"></div>
-                      <span>All Systems Operational</span>
-                    </div>
-                    <p className="status-details">Last updated: {moment().tz('Asia/Manila').format('MMMM D, YYYY h:mm A')}</p>
                   </div>
                 </Card.Body>
               </Card>

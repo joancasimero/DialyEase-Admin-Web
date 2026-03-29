@@ -118,7 +118,7 @@
 .metrics-grid {
   gap: 1.5rem;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
 }
 
 .metric-col {
@@ -146,26 +146,28 @@
 }
 
 .metric-card .card-body {
-  padding: 1.75rem 1.25rem;
+  padding: 2rem 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
   align-items: center;
   text-align: center;
   justify-content: center;
   flex: 1;
+  min-width: 0;
 }
 
 .metric-icon {
-  width: 60px;
-  height: 60px;
-  border-radius: 12px;
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   font-weight: 600;
-  margin: 0 auto;
+  margin: 0 auto 0.5rem;
+  font-size: 1.8rem;
 }
 
 .patients-icon {
@@ -191,38 +193,45 @@
 .metric-content {
   flex: 1;
   width: 100%;
-  overflow: hidden;
+  min-width: 0;
+  word-wrap: break-word;
+  word-break: break-word;
 }
 
 .metric-value {
-  font-size: 2.2rem;
+  font-size: 2.4rem;
   font-weight: 800;
   color: #1f2937;
   margin: 0;
-  line-height: 1.1;
-  margin-bottom: 0.4rem;
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
   font-family: 'Inter Tight', sans-serif;
+  white-space: nowrap;
 }
 
 .metric-label {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: #6b7280;
   margin: 0;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.5rem;
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.5px;
   font-family: 'Inter Tight', sans-serif;
-  word-spacing: 2px;
   white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .metric-subtext {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: #9ca3af;
   margin: 0;
   font-weight: 500;
   font-family: 'Inter Tight', sans-serif;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Analytics Section */
@@ -674,20 +683,21 @@
   }
 
   .metric-icon {
-    width: 52px;
-    height: 52px;
+    width: 56px;
+    height: 56px;
   }
 
   .metric-value {
-    font-size: 1.8rem;
+    font-size: 1.95rem;
   }
 
   .metric-label {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
   }
 
   .metrics-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
   }
 
   .analytics-grid {

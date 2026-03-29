@@ -197,10 +197,12 @@
 
 .analytics-grid {
   gap: 1.5rem;
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
 }
 
 .analytics-col {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0;
 }
 
 .analytics-card {
@@ -657,6 +659,7 @@
 
   .analytics-grid {
     gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .age-demographics-card .card-body {
@@ -731,6 +734,10 @@
 
   .metrics-grid-simple {
     gap: 1rem;
+    grid-template-columns: 1fr;
+  }
+
+  .analytics-grid {
     grid-template-columns: 1fr;
   }
 }

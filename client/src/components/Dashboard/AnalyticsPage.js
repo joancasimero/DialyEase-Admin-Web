@@ -40,7 +40,9 @@ const AnalyticsPage = () => {
       '60+': 0
     },
     machineUtilization: [],
-    topHospitals: []
+    topHospitals: [],
+    genderDistribution: {},
+    comorbidities: []
   });
 
   const [selectedMachineId, setSelectedMachineId] = useState(null);
@@ -220,6 +222,46 @@ const AnalyticsPage = () => {
       .sort((a, b) => b.count - a.count)
       .slice(0, 3);
 
+    // Gender distribution calculation
+    const genderDistribution = {};
+    patients.forEach(patient => {
+      if (patient.gender) {
+        genderDistribution[patient.gender] = (genderDistribution[patient.gender] || 0) + 1;
+      }
+    });
+
+    // Comorbidity extraction from medical history
+    const comorbidityKeywords = {
+      'Diabetes': ['diabetes', 'diabetic', 'dm', 'type 1', 'type 2'],
+      'Hypertension': ['hypertension', 'high blood pressure', 'hbp'],
+      'Heart Disease': ['heart disease', 'cardiac', 'heart failure', 'chf'],
+      'Kidney Disease': ['kidney disease', 'ckd', 'chronic kidney'],
+      'Anemia': ['anemia', 'anaemia', 'low hemoglobin'],
+      'Bone Disease': ['bone disease', 'osteoporosis'],
+      'Liver Disease': ['liver disease', 'hepatic', 'cirrhosis'],
+      'Lung Disease': ['lung disease', 'asthma', 'copd']
+    };
+
+    const comorbidityMap = {};
+    patients.forEach(patient => {
+      if (patient.medicalHistory) {
+        const history = patient.medicalHistory.toLowerCase();
+        Object.entries(comorbidityKeywords).forEach(([condition, keywords]) => {
+          if (keywords.some(keyword => history.includes(keyword))) {
+            comorbidityMap[condition] = (comorbidityMap[condition] || 0) + 1;
+          }
+        });
+      }
+    });
+
+    const comorbidities = Object.entries(comorbidityMap)
+      .map(([condition, count]) => ({
+        condition,
+        count,
+        percentage: patients.length > 0 ? Math.round((count / patients.length) * 100) : 0
+      }))
+      .sort((a, b) => b.count - a.count);
+
     setStats({
       totalPatients: patients.length,
       newPatientsThisMonth,
@@ -239,7 +281,9 @@ const AnalyticsPage = () => {
       machineAvailability,
       ageGroups,
       machineUtilization,
-      topHospitals
+      topHospitals,
+      genderDistribution,
+      comorbidities
     });
   }, [patients, machines, appointments, attendance]);
 
@@ -434,15 +478,17 @@ const AnalyticsPage = () => {
           </Row>
         </div>
 
-        {/* Age Demographic Section */}
+        {/* Patient Demographics Section */}
         <div className="analytics-section">
-          <h2 className="section-title">Patient Demographics - Age Distribution</h2>
+          <h2 className="section-title">Patient Demographics</h2>
           <Row>
-            <Col lg={12} className="analytics-col">
-              <Card className="age-demographics-card">
+            {/* Age Distribution */}
+            <Col lg={6} md={12} className="analytics-col">
+              <Card className="demographics-card">
                 <Card.Body>
+                  <h3 className="demographics-subtitle">Age Distribution</h3>
                   <div className="age-chart-container">
-                    <ResponsiveContainer width="100%" height={350}>
+                    <ResponsiveContainer width="100%" height={300}>
                       <BarChart
                         data={Object.entries(stats.ageGroups).map(([ageRange, count]) => ({
                           name: ageRange,
@@ -478,6 +524,69 @@ const AnalyticsPage = () => {
                         />
                       </BarChart>
                     </ResponsiveContainer>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+
+            {/* Gender Distribution */}
+            <Col lg={6} md={12} className="analytics-col">
+              <Card className="demographics-card">
+                <Card.Body>
+                  <h3 className="demographics-subtitle">Gender Distribution</h3>
+                  <div className="gender-stats">
+                    {Object.entries(stats.genderDistribution).map(([gender, count]) => (
+                      <div key={gender} className="gender-item">
+                        <div className="gender-header">
+                          <span className="gender-label">{gender}</span>
+                          <span className="gender-count">{count}</span>
+                        </div>
+                        <div className="gender-bar">
+                          <div 
+                            className={`gender-bar-fill gender-${gender.toLowerCase().replace(/\\s+/g, '-')}`}
+                            style={{width: `${(count / stats.totalPatients) * 100}%`}}
+                          ></div>
+                        </div>
+                        <p className="gender-percentage">{stats.totalPatients > 0 ? Math.round((count / stats.totalPatients) * 100) : 0}%</p>
+                      </div>
+                    ))}
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </div>
+
+        {/* Comorbidity Distribution Section */}
+        <div className="analytics-section">
+          <h2 className="section-title">Patient Comorbidities</h2>
+          <Row>
+            <Col lg={12} className="analytics-col">
+              <Card className="comorbidity-card">
+                <Card.Body>
+                  <div className="comorbidity-list">
+                    {stats.comorbidities.length > 0 ? (
+                      stats.comorbidities.map((comorbidity, index) => (
+                        <div key={comorbidity.condition} className="comorbidity-item">
+                          <div className="comorbidity-header">
+                            <span className="comorbidity-index">{index + 1}</span>
+                            <span className="comorbidity-name">{comorbidity.condition}</span>
+                            <span className="comorbidity-badge">{comorbidity.count} patients</span>
+                          </div>
+                          <div className="comorbidity-bar-container">
+                            <div className="comorbidity-bar">
+                              <div 
+                                className="comorbidity-bar-fill"
+                                style={{width: `${comorbidity.percentage}%`}}
+                              ></div>
+                            </div>
+                            <span className="comorbidity-percentage">{comorbidity.percentage}%</span>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p style={{textAlign: 'center', color: '#9ca3af', padding: '2rem'}}>No comorbidity data available</p>
+                    )}
                   </div>
                 </Card.Body>
               </Card>

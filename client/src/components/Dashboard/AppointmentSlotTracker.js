@@ -376,18 +376,18 @@ const AppointmentSlotTracker = ({ authToken }) => {
           borderRadius: '24px',
           boxShadow: '0 20px 60px rgba(42, 63, 157, 0.12), 0 8px 25px rgba(74, 108, 247, 0.08)',
           overflow: 'hidden',
-          marginBottom: '1.5rem',
+          marginBottom: '0.75rem',
           marginTop: '0rem',
           border: '2px solid rgba(42, 63, 157, 0.15)',
           fontFamily: "'Inter Tight', 'Inter', 'Segoe UI', sans-serif"
         }}>
-          <div style={{ padding: '1.5rem 2rem' }}>
+          <div style={{ padding: '1rem 1.5rem' }}>
             <div style={{
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              marginBottom: '0.75rem',
-              paddingBottom: '1rem',
+              marginBottom: '0.5rem',
+              paddingBottom: '0.75rem',
               borderBottom: '2px solid rgba(42, 63, 157, 0.15)'
             }}>
               <div>
@@ -435,9 +435,9 @@ const AppointmentSlotTracker = ({ authToken }) => {
               <div style={{
                 background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
                 color: 'white',
-                padding: '1rem 1.5rem',
+                padding: '0.75rem 1rem',
                 borderRadius: '12px',
-                marginBottom: '1.5rem',
+                marginBottom: '0.75rem',
                 fontWeight: 600,
                 fontSize: '0.9rem',
                 boxShadow: '0 4px 12px rgba(220, 38, 38, 0.3)',
@@ -450,9 +450,9 @@ const AppointmentSlotTracker = ({ authToken }) => {
               <div style={{
                 background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
                 color: 'white',
-                padding: '1rem 1.5rem',
+                padding: '0.75rem 1rem',
                 borderRadius: '12px',
-                marginBottom: '1.5rem',
+                marginBottom: '0.75rem',
                 fontWeight: 600,
                 fontSize: '0.9rem',
                 boxShadow: '0 4px 12px rgba(5, 150, 105, 0.3)',
@@ -464,12 +464,12 @@ const AppointmentSlotTracker = ({ authToken }) => {
             {rescheduleLoading ? (
               <div style={{
                 textAlign: 'center',
-                padding: '3rem 2rem',
+                padding: '1.5rem 1rem',
                 color: '#64748b'
               }}>
-                <Spinner animation="border" style={{ color: '#2a3f9d', marginBottom: '1rem' }} />
+                <Spinner animation="border" style={{ color: '#2a3f9d', marginBottom: '0.5rem' }} />
                 <div style={{
-                  fontSize: '1rem',
+                  fontSize: '0.9rem',
                   fontWeight: 600,
                   fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif'
                 }}>
@@ -479,9 +479,9 @@ const AppointmentSlotTracker = ({ authToken }) => {
             ) : rescheduleRequests.length === 0 ? (
               <div style={{
                 textAlign: 'center',
-                padding: '3rem 2rem',
+                padding: '1.5rem 1rem',
                 color: '#64748b',
-                fontSize: '1rem',
+                fontSize: '0.9rem',
                 fontWeight: 600,
                 fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif'
               }}>

@@ -698,50 +698,52 @@ function getPhilippineDateStr() {
             box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1) !important;
           }
           .react-datepicker__header {
-            background-color: #2a3f9d;
-            border-color: #2a3f9d;
-            padding: 0.6rem 0.75rem;
-            border-bottom: none;
-            border-radius: 8px 8px 0 0;
+            background-color: #f9fafb;
+            border-color: #e5e7eb;
+            padding: 0.5rem 0.75rem;
+            border-bottom: 1px solid #e5e7eb;
+            border-radius: 0;
           }
           .react-datepicker__current-month {
-            color: white;
-            font-weight: 700;
-            font-size: 0.85rem;
+            color: #1f2937;
+            font-weight: 600;
+            font-size: 0.9rem;
             margin-bottom: 0;
           }
           .react-datepicker__day-names {
-            margin-bottom: 0.25rem;
-            margin-top: 0.5rem;
+            margin-bottom: 0.3rem;
+            margin-top: 0.3rem;
+            padding: 0.25rem 0;
+            border-bottom: 1px solid #f3f4f6;
           }
           .react-datepicker__day-name {
             color: #6b7280;
-            font-weight: 600;
+            font-weight: 500;
             font-size: 0.7rem;
             line-height: 1.5;
-            width: 1.8rem;
+            width: 2rem;
           }
           .react-datepicker__day {
-            color: #374151;
-            font-weight: 500;
+            color: #1f2937;
+            font-weight: 400;
             border-radius: 4px;
-            margin: 0.2rem;
+            margin: 0.25rem;
             display: inline-block !important;
-            width: 1.8rem !important;
-            height: 1.8rem !important;
-            line-height: 1.8rem !important;
-            font-size: 0.75rem;
+            width: 2rem !important;
+            height: 2rem !important;
+            line-height: 2rem !important;
+            font-size: 0.8rem;
           }
           .react-datepicker__day--selected,
           .react-datepicker__day--in-selecting-range,
           .react-datepicker__day--in-range {
             background-color: #2a3f9d !important;
             color: white !important;
-            font-weight: 700 !important;
+            font-weight: 600 !important;
           }
           .react-datepicker__day:hover {
-            background-color: #4a6cf7 !important;
-            color: white !important;
+            background-color: #e5e7eb !important;
+            color: #1f2937 !important;
             border-radius: 4px !important;
           }
           .react-datepicker__day--disabled {
@@ -750,31 +752,31 @@ function getPhilippineDateStr() {
             background-color: transparent !important;
           }
           .react-datepicker__navigation {
-            top: 0.6rem;
+            top: 0.5rem;
             width: 0 !important;
-            line-height: 1.4rem !important;
+            line-height: 1.5rem !important;
           }
           .react-datepicker__navigation--previous {
-            left: 0.6rem;
+            left: 0.5rem;
           }
           .react-datepicker__navigation--next {
-            right: 0.6rem;
+            right: 0.5rem;
           }
           .react-datepicker__navigation-icon::before {
-            border-color: white !important;
+            border-color: #6b7280 !important;
             border-width: 1px !important;
           }
           .react-datepicker {
             background-color: white !important;
-            border: 1px solid #d1d5db !important;
-            border-radius: 8px !important;
-            box-shadow: 0 4px 12px rgba(42, 63, 157, 0.15) !important;
+            border: 1px solid #e5e7eb !important;
+            border-radius: 6px !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
             font-family: 'Inter Tight, Inter, Segoe UI, sans-serif' !important;
-            padding: 0.6rem 0.75rem !important;
+            padding: 0.5rem !important;
             z-index: 9999 !important;
             width: auto !important;
             margin: 0 !important;
-            min-width: 230px !important;
+            min-width: 240px !important;
           }
           .react-datepicker__month-container {
             width: 100% !important;

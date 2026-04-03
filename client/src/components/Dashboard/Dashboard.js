@@ -68,36 +68,57 @@ const Dashboard = () => {
       const dateStr = moment(dateToFetch).tz('Asia/Manila').format('YYYY-MM-DD');
       console.log('Fetching appointments for:', dateStr);
       
-      const response = await api.get(`/patients/appointments-by-date/${dateStr}`, {
+      // Fetch from appointment slots endpoint to get booked slots with patient info
+      const response = await api.get(`/appointment-slots/date/${dateStr}`, {
         headers: getAuthHeader()
       });
 
-      console.log('Response:', response.data);
+      console.log('Slot Response:', response.data);
 
-      if (response.data.success) {
-        setTodayAppointments(response.data.appointments);
-        console.log('Appointments loaded:', response.data.appointments.length);
+      if (response.data) {
+        // Extract booked slots from morning and afternoon arrays
+        const bookedAppointments = [];
+        
+        // Process morning slots
+        if (response.data.morning && Array.isArray(response.data.morning)) {
+          response.data.morning.forEach(slot => {
+            if (slot.isBooked && slot.patient) {
+              bookedAppointments.push({
+                ...slot,
+                timeSlot: 'morning',
+                timeString: 'Morning (8:00 AM - 12:00 PM)',
+                patientName: `${slot.patient.firstName} ${slot.patient.lastName}`,
+                machine: slot.machine?.name || 'N/A'
+              });
+            }
+          });
+        }
+        
+        // Process afternoon slots
+        if (response.data.afternoon && Array.isArray(response.data.afternoon)) {
+          response.data.afternoon.forEach(slot => {
+            if (slot.isBooked && slot.patient) {
+              bookedAppointments.push({
+                ...slot,
+                timeSlot: 'afternoon',
+                timeString: 'Afternoon (1:00 PM - 5:00 PM)',
+                patientName: `${slot.patient.firstName} ${slot.patient.lastName}`,
+                machine: slot.machine?.name || 'N/A'
+              });
+            }
+          });
+        }
+        
+        setTodayAppointments(bookedAppointments);
+        console.log('Booked appointments loaded:', bookedAppointments.length);
       } else {
         setTodayAppointments([]);
-        console.log('No appointments found');
+        console.log('No slot data found');
       }
     } catch (err) {
       console.error('Error fetching appointments:', err);
-      // Fallback to today-appointments endpoint if the new one doesn't exist
-      try {
-        const response = await api.get('/patients/today-appointments', {
-          headers: getAuthHeader()
-        });
-        if (response.data.success) {
-          setTodayAppointments(response.data.appointments);
-        } else {
-          setTodayAppointments([]);
-        }
-      } catch (fallbackErr) {
-        console.error('Error fetching appointments:', fallbackErr);
-        setError("Failed to load appointments");
-        setTodayAppointments([]);
-      }
+      setTodayAppointments([]);
+      setError("Failed to load appointments");
     }
   }, []);
 
@@ -1570,7 +1591,7 @@ function getPhilippineDateStr() {
               padding: '1.25rem 1.5rem',
               borderBottom: 'none',
               fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif'
-            }}>Type</th>
+            }}>Machine</th>
             <th style={{
               color: '#374151',
               fontWeight: 700,
@@ -1644,7 +1665,7 @@ function getPhilippineDateStr() {
                 fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif',
                 fontSize: '0.9rem'
               }}>
-                {appointment.patient ? `${appointment.patient.firstName} ${appointment.patient.lastName}` : 'Unassigned'}
+                {appointment.patientName || (appointment.patient ? `${appointment.patient.firstName} ${appointment.patient.lastName}` : 'Unassigned')}
               </td>
               <td style={{
                 padding: '1.25rem 1.5rem',
@@ -1664,22 +1685,22 @@ function getPhilippineDateStr() {
                 fontSize: '0.9rem',
                 fontWeight: 600,
                 color: '#374151'
-              }}>{appointment.timeSlot}</td>
+              }}>{appointment.timeString || appointment.timeSlot}</td>
+              <td style={{
+                padding: '1.25rem 1.5rem',
+                borderBottom: 'none',
+                fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif',
+                fontSize: '0.9rem',
+                fontWeight: 600,
+                color: '#374151'
+              }}>
+                {appointment.machine || 'N/A'}
+              </td>
               <td style={{
                 padding: '1.25rem 1.5rem',
                 borderBottom: 'none'
               }}>
-                {appointment.isReschedule ? (
-                  <Badge style={{ 
-                    backgroundColor: '#f59e0b',
-                    color: 'white',
-                    fontSize: '0.8rem',
-                    padding: '0.4em 0.8em',
-                    borderRadius: '12px',
-                    fontWeight: 600,
-                    border: 'none'
-                  }}>Rescheduled</Badge>
-                ) : (
+                {appointment.isBooked ? (
                   <Badge style={{ 
                     backgroundColor: '#2a3f9d',
                     color: 'white',
@@ -1688,7 +1709,17 @@ function getPhilippineDateStr() {
                     borderRadius: '12px',
                     fontWeight: 600,
                     border: 'none'
-                  }}>Regular</Badge>
+                  }}>Booked</Badge>
+                ) : (
+                  <Badge style={{ 
+                    backgroundColor: '#22c55e',
+                    color: 'white',
+                    fontSize: '0.8rem',
+                    padding: '0.4em 0.8em',
+                    borderRadius: '12px',
+                    fontWeight: 600,
+                    border: 'none'
+                  }}>Available</Badge>
                 )}
               </td>
               <td style={{

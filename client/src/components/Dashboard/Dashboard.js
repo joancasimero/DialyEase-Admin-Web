@@ -5,12 +5,17 @@ import authService from '../../services/authService';
 import api from '../../services/api';
 import { FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
 import moment from 'moment-timezone';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 
 
 const Dashboard = () => {
   const [admin, setAdmin] = useState(null);
   const [todayAppointments, setTodayAppointments] = useState([]);
+  const [appointmentDate, setAppointmentDate] = useState(() => {
+    return moment().tz('Asia/Manila').toDate();
+  });
   const [patients, setPatients] = useState([]);
   const [machines, setMachines] = useState([]);
   const [error, setError] = useState(null);
@@ -57,28 +62,42 @@ const Dashboard = () => {
     return moment().tz('Asia/Manila');
   };
 
-  const fetchTodayAppointments = useCallback(async () => {
+  const fetchTodayAppointments = useCallback(async (dateObj = null) => {
     try {
-      console.log('Fetching today\'s appointments...'); // Debug log
+      const dateToFetch = dateObj || new Date();
+      const dateStr = moment(dateToFetch).tz('Asia/Manila').format('YYYY-MM-DD');
+      console.log('Fetching appointments for:', dateStr);
       
-      const response = await api.get('/patients/today-appointments', {
+      const response = await api.get(`/patients/appointments-by-date/${dateStr}`, {
         headers: getAuthHeader()
       });
 
-      console.log('Response:', response.data); // Debug log
+      console.log('Response:', response.data);
 
       if (response.data.success) {
         setTodayAppointments(response.data.appointments);
-        console.log('Today\'s appointments loaded:', response.data.appointments.length);
+        console.log('Appointments loaded:', response.data.appointments.length);
       } else {
         setTodayAppointments([]);
-        console.log('No appointments found for today');
+        console.log('No appointments found');
       }
     } catch (err) {
       console.error('Error fetching appointments:', err);
-      console.error('Error details:', err.response?.data); // More detailed error logging
-      setError("Failed to load today's appointments");
-      setTodayAppointments([]);
+      // Fallback to today-appointments endpoint if the new one doesn't exist
+      try {
+        const response = await api.get('/patients/today-appointments', {
+          headers: getAuthHeader()
+        });
+        if (response.data.success) {
+          setTodayAppointments(response.data.appointments);
+        } else {
+          setTodayAppointments([]);
+        }
+      } catch (fallbackErr) {
+        console.error('Error fetching appointments:', fallbackErr);
+        setError("Failed to load appointments");
+        setTodayAppointments([]);
+      }
     }
   }, []);
 
@@ -610,6 +629,45 @@ function getPhilippineDateStr() {
       backgroundColor: '#ffffff', 
       minHeight: '100vh'
     }}>
+      <style>
+        {`
+          .react-datepicker__input-container {
+            display: inline-block;
+          }
+          .react-datepicker-wrapper {
+            display: inline-block;
+          }
+          .form-control {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            color: white !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            border-radius: 8px !important;
+          }
+          .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.7) !important;
+          }
+          .react-datepicker__header {
+            background-color: #2a3f9d;
+            border-color: #2a3f9d;
+          }
+          .react-datepicker__current-month {
+            color: white;
+            font-weight: 700;
+          }
+          .react-datepicker__day--selected,
+          .react-datepicker__day--in-selecting-range,
+          .react-datepicker__day--in-range {
+            background-color: #2a3f9d;
+          }
+          .react-datepicker__day:hover {
+            background-color: #4a6cf7;
+          }
+          .react-datepicker__day--disabled {
+            color: #d1d5db;
+            cursor: not-allowed;
+          }
+        `}
+      </style>
       <Container style={styles.container}>
         <div style={{ marginLeft: 240 }}>
           {admin && (
@@ -1325,7 +1383,10 @@ function getPhilippineDateStr() {
     <div style={{
       padding: '1.5rem 2rem',
       background: 'linear-gradient(135deg, #2a3f9d 0%, #4a6cf7 100%)',
-      borderBottom: 'none'
+      borderBottom: 'none',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center'
     }}>
       <h4 style={{
         fontSize: '1.1rem',
@@ -1336,8 +1397,29 @@ function getPhilippineDateStr() {
         textTransform: 'uppercase',
         fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif'
       }}>
-        Today's Appointments
+        Appointments for {moment(appointmentDate).tz('Asia/Manila').format('MMM DD, YYYY')}
       </h4>
+      <DatePicker
+        selected={appointmentDate}
+        onChange={(date) => {
+          setAppointmentDate(date);
+          fetchTodayAppointments(date);
+        }}
+        minDate={moment().tz('Asia/Manila').toDate()}
+        dateFormat="yyyy-MM-dd"
+        placeholderText="Select Date"
+        className="form-control"
+        style={{
+          borderRadius: '8px',
+          border: '1px solid rgba(255, 255, 255, 0.3)',
+          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+          color: 'white',
+          padding: '0.5rem 0.75rem',
+          fontSize: '0.85rem',
+          width: '150px',
+          fontWeight: 600
+        }}
+      />
     </div>
     <div style={{ padding: '0' }}>
       <Table hover responsive style={{ 
@@ -1442,7 +1524,7 @@ function getPhilippineDateStr() {
             fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif',
             borderBottom: 'none'
           }}>
-            📅 No confirmed appointments for today.
+            📅 No confirmed appointments for this date.
           </td>
         </tr>
       ) : (

@@ -27,7 +27,7 @@ const AppointmentSlotTrackerPage = () => {
         background: 'white',
         borderRadius: 0,
         boxShadow: 'none',
-        padding: '3rem 2.5rem',
+        padding: '2rem 2.5rem',
         minHeight: '100vh',
         marginLeft: 280, // Increased margin to prevent overlap with sidebar
         marginRight: 20,
@@ -40,7 +40,7 @@ const AppointmentSlotTrackerPage = () => {
         boxSizing: 'border-box',
       }}>
         <div style={{
-          marginBottom: '2.5rem'
+          marginBottom: '1.5rem'
         }}>
           <h1 style={{
             fontWeight: '800',

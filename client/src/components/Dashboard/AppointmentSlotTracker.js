@@ -386,7 +386,7 @@ const AppointmentSlotTracker = ({ authToken }) => {
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              marginBottom: '1.25rem',
+              marginBottom: '0.75rem',
               paddingBottom: '1rem',
               borderBottom: '2px solid rgba(42, 63, 157, 0.15)'
             }}>
@@ -506,7 +506,7 @@ const AppointmentSlotTracker = ({ authToken }) => {
                       fontSize: '0.85rem',
                       letterSpacing: '0.025em',
                       textTransform: 'uppercase',
-                      padding: '1.25rem 1.5rem',
+                      padding: '0.75rem 1.5rem',
                       borderBottom: 'none',
                       fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif'
                     }}>Patient</th>
@@ -516,7 +516,7 @@ const AppointmentSlotTracker = ({ authToken }) => {
                       fontSize: '0.85rem',
                       letterSpacing: '0.025em',
                       textTransform: 'uppercase',
-                      padding: '1.25rem 1.5rem',
+                      padding: '0.75rem 1.5rem',
                       borderBottom: 'none',
                       fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif'
                     }}>Current Date</th>
@@ -526,7 +526,7 @@ const AppointmentSlotTracker = ({ authToken }) => {
                       fontSize: '0.85rem',
                       letterSpacing: '0.025em',
                       textTransform: 'uppercase',
-                      padding: '1.25rem 1.5rem',
+                      padding: '0.75rem 1.5rem',
                       borderBottom: 'none',
                       fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif'
                     }}>Requested Date</th>
@@ -536,7 +536,7 @@ const AppointmentSlotTracker = ({ authToken }) => {
                       fontSize: '0.85rem',
                       letterSpacing: '0.025em',
                       textTransform: 'uppercase',
-                      padding: '1.25rem 1.5rem',
+                      padding: '0.75rem 1.5rem',
                       borderBottom: 'none',
                       fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif'
                     }}>Submitted</th>
@@ -546,7 +546,7 @@ const AppointmentSlotTracker = ({ authToken }) => {
                       fontSize: '0.85rem',
                       letterSpacing: '0.025em',
                       textTransform: 'uppercase',
-                      padding: '1.25rem 1.5rem',
+                      padding: '0.75rem 1.5rem',
                       borderBottom: 'none',
                       fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif'
                     }}>Status</th>
@@ -556,7 +556,7 @@ const AppointmentSlotTracker = ({ authToken }) => {
                       fontSize: '0.85rem',
                       letterSpacing: '0.025em',
                       textTransform: 'uppercase',
-                      padding: '1.25rem 1.5rem',
+                      padding: '0.75rem 1.5rem',
                       borderBottom: 'none',
                       fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif'
                     }}>Actions</th>
@@ -581,7 +581,7 @@ const AppointmentSlotTracker = ({ authToken }) => {
                         <td style={{
                           fontWeight: 700,
                           color: '#1e293b',
-                          padding: '1.25rem 1.5rem',
+                          padding: '0.75rem 1.5rem',
                           borderBottom: 'none',
                           fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif',
                           fontSize: '0.9rem'
@@ -597,7 +597,7 @@ const AppointmentSlotTracker = ({ authToken }) => {
                           </div>
                         </td>
                         <td style={{
-                          padding: '1.25rem 1.5rem',
+                          padding: '0.75rem 1.5rem',
                           borderBottom: 'none',
                           fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif',
                           fontSize: '0.9rem',
@@ -605,7 +605,7 @@ const AppointmentSlotTracker = ({ authToken }) => {
                           color: '#000000'
                         }}>{originalScheduleDate}</td>
                         <td style={{
-                          padding: '1.25rem 1.5rem',
+                          padding: '0.75rem 1.5rem',
                           borderBottom: 'none',
                           fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif',
                           fontSize: '0.9rem',
@@ -613,7 +613,7 @@ const AppointmentSlotTracker = ({ authToken }) => {
                           color: '#374151'
                         }}>{req.requestedDate}</td>
                         <td style={{
-                          padding: '1.25rem 1.5rem',
+                          padding: '0.75rem 1.5rem',
                           borderBottom: 'none',
                           fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif',
                           fontSize: '0.9rem',
@@ -621,7 +621,7 @@ const AppointmentSlotTracker = ({ authToken }) => {
                           color: '#64748b'
                         }}>{requestedAt}</td>
                         <td style={{
-                          padding: '1.25rem 1.5rem',
+                          padding: '0.75rem 1.5rem',
                           borderBottom: 'none'
                         }}>
                           <Badge style={{
@@ -641,7 +641,7 @@ const AppointmentSlotTracker = ({ authToken }) => {
                           </Badge>
                         </td>
                         <td style={{
-                          padding: '1.25rem 1.5rem',
+                          padding: '0.75rem 1.5rem',
                           borderBottom: 'none'
                         }}>
                           <div style={{ display: 'flex', gap: '0.5rem' }}>

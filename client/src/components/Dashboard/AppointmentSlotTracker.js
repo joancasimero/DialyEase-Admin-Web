@@ -602,7 +602,7 @@ const AppointmentSlotTracker = ({ authToken }) => {
                           fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif',
                           fontSize: '0.9rem',
                           fontWeight: 600,
-                          color: 'rgba(255, 255, 255, 0.9)'
+                          color: '#1e293b'
                         }}>{originalScheduleDate}</td>
                         <td style={{
                           padding: '1.25rem 1.5rem',

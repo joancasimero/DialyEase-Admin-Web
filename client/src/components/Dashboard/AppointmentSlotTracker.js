@@ -376,18 +376,18 @@ const AppointmentSlotTracker = ({ authToken }) => {
           borderRadius: '24px',
           boxShadow: '0 20px 60px rgba(42, 63, 157, 0.12), 0 8px 25px rgba(74, 108, 247, 0.08)',
           overflow: 'hidden',
-          marginBottom: '2rem',
-          marginTop: '1.5rem',
+          marginBottom: '1.5rem',
+          marginTop: '0rem',
           border: '2px solid rgba(42, 63, 157, 0.15)',
           fontFamily: "'Inter Tight', 'Inter', 'Segoe UI', sans-serif"
         }}>
-          <div style={{ padding: '2rem 2.5rem' }}>
+          <div style={{ padding: '1.5rem 2rem' }}>
             <div style={{
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              marginBottom: '2rem',
-              paddingBottom: '1.5rem',
+              marginBottom: '1.25rem',
+              paddingBottom: '1rem',
               borderBottom: '2px solid rgba(42, 63, 157, 0.15)'
             }}>
               <div>

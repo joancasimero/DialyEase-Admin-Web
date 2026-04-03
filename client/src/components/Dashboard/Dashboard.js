@@ -631,40 +631,88 @@ function getPhilippineDateStr() {
     }}>
       <style>
         {`
-          .react-datepicker__input-container {
-            display: inline-block;
-          }
-          .react-datepicker-wrapper {
-            display: inline-block;
-          }
-          .form-control {
-            background-color: rgba(255, 255, 255, 0.1) !important;
+          .appointment-date-picker {
+            background-color: rgba(255, 255, 255, 0.15) !important;
             color: white !important;
-            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            border: 2px solid rgba(255, 255, 255, 0.3) !important;
             border-radius: 8px !important;
+            padding: 0.6rem 0.8rem !important;
+            font-size: 0.9rem !important;
+            font-weight: 600 !important;
+            font-family: 'Inter Tight, Inter, Segoe UI, sans-serif' !important;
+            width: 160px !important;
+            cursor: pointer !important;
           }
-          .form-control::placeholder {
+          .appointment-date-picker::placeholder {
             color: rgba(255, 255, 255, 0.7) !important;
+          }
+          .appointment-date-picker:focus {
+            outline: none !important;
+            background-color: rgba(255, 255, 255, 0.2) !important;
+            border-color: rgba(255, 255, 255, 0.5) !important;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1) !important;
           }
           .react-datepicker__header {
             background-color: #2a3f9d;
             border-color: #2a3f9d;
+            padding: 1rem;
           }
           .react-datepicker__current-month {
             color: white;
             font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+          }
+          .react-datepicker__day-names {
+            margin-bottom: 0.5rem;
+          }
+          .react-datepicker__day-name {
+            color: #9ca3af;
+            font-weight: 600;
+            font-size: 0.85rem;
+          }
+          .react-datepicker__day {
+            color: #374151;
+            font-weight: 500;
+            border-radius: 6px;
+            margin: 0.3rem;
           }
           .react-datepicker__day--selected,
           .react-datepicker__day--in-selecting-range,
           .react-datepicker__day--in-range {
             background-color: #2a3f9d;
+            color: white;
+            font-weight: 700;
           }
           .react-datepicker__day:hover {
             background-color: #4a6cf7;
+            color: white;
+            border-radius: 6px;
           }
           .react-datepicker__day--disabled {
             color: #d1d5db;
             cursor: not-allowed;
+            background-color: transparent;
+          }
+          .react-datepicker__navigation {
+            top: 1rem;
+          }
+          .react-datepicker__navigation--previous {
+            left: 1rem;
+          }
+          .react-datepicker__navigation--next {
+            right: 1rem;
+          }
+          .react-datepicker__navigation-icon::before {
+            border-color: white;
+          }
+          .react-datepicker {
+            background-color: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(42, 63, 157, 0.2);
+            font-family: 'Inter Tight, Inter, Segoe UI, sans-serif';
+            padding: 1rem;
           }
         `}
       </style>
@@ -1386,7 +1434,8 @@ function getPhilippineDateStr() {
       borderBottom: 'none',
       display: 'flex',
       justifyContent: 'space-between',
-      alignItems: 'center'
+      alignItems: 'center',
+      gap: '1rem'
     }}>
       <h4 style={{
         fontSize: '1.1rem',
@@ -1395,31 +1444,36 @@ function getPhilippineDateStr() {
         margin: 0,
         letterSpacing: '-0.025em',
         textTransform: 'uppercase',
-        fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif'
+        fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif',
+        flex: 1
       }}>
         Appointments for {moment(appointmentDate).tz('Asia/Manila').format('MMM DD, YYYY')}
       </h4>
-      <DatePicker
-        selected={appointmentDate}
-        onChange={(date) => {
-          setAppointmentDate(date);
-          fetchTodayAppointments(date);
-        }}
-        minDate={moment().tz('Asia/Manila').toDate()}
-        dateFormat="yyyy-MM-dd"
-        placeholderText="Select Date"
-        className="form-control"
-        style={{
-          borderRadius: '8px',
-          border: '1px solid rgba(255, 255, 255, 0.3)',
-          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.5rem'
+      }}>
+        <label style={{
           color: 'white',
-          padding: '0.5rem 0.75rem',
-          fontSize: '0.85rem',
-          width: '150px',
-          fontWeight: 600
-        }}
-      />
+          fontWeight: 600,
+          fontSize: '0.9rem',
+          margin: 0,
+          whiteSpace: 'nowrap'
+        }}>
+          Select Date:
+        </label>
+        <DatePicker
+          selected={appointmentDate}
+          onChange={(date) => {
+            setAppointmentDate(date);
+            fetchTodayAppointments(date);
+          }}
+          minDate={moment().tz('Asia/Manila').toDate()}
+          dateFormat="yyyy-MM-dd"
+          className="appointment-date-picker"
+        />
+      </div>
     </div>
     <div style={{ padding: '0' }}>
       <Table hover responsive style={{ 

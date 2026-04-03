@@ -1447,7 +1447,9 @@ function getPhilippineDateStr() {
         fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif',
         flex: 1
       }}>
-        Appointments for {moment(appointmentDate).tz('Asia/Manila').format('MMM DD, YYYY')}
+        {moment(appointmentDate).tz('Asia/Manila').format('YYYY-MM-DD') === moment().tz('Asia/Manila').format('YYYY-MM-DD') 
+          ? "Today's Appointments" 
+          : `Appointments for ${moment(appointmentDate).tz('Asia/Manila').format('MMM DD, YYYY')}`}
       </h4>
       <div style={{
         display: 'flex',
@@ -1472,6 +1474,21 @@ function getPhilippineDateStr() {
           minDate={moment().tz('Asia/Manila').toDate()}
           dateFormat="yyyy-MM-dd"
           className="appointment-date-picker"
+          popperPlacement="bottom-end"
+          popperModifiers={[
+            {
+              name: 'offset',
+              options: {
+                offset: [0, 10]
+              }
+            },
+            {
+              name: 'preventOverflow',
+              options: {
+                padding: 8
+              }
+            }
+          ]}
         />
       </div>
     </div>

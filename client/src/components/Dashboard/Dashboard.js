@@ -676,26 +676,31 @@ function getPhilippineDateStr() {
             font-weight: 500;
             border-radius: 6px;
             margin: 0.3rem;
+            display: inline-block !important;
+            width: 2.5rem !important;
+            line-height: 2.5rem !important;
           }
           .react-datepicker__day--selected,
           .react-datepicker__day--in-selecting-range,
           .react-datepicker__day--in-range {
-            background-color: #2a3f9d;
-            color: white;
-            font-weight: 700;
+            background-color: #2a3f9d !important;
+            color: white !important;
+            font-weight: 700 !important;
           }
           .react-datepicker__day:hover {
-            background-color: #4a6cf7;
-            color: white;
-            border-radius: 6px;
+            background-color: #4a6cf7 !important;
+            color: white !important;
+            border-radius: 6px !important;
           }
           .react-datepicker__day--disabled {
-            color: #d1d5db;
-            cursor: not-allowed;
-            background-color: transparent;
+            color: #d1d5db !important;
+            cursor: not-allowed !important;
+            background-color: transparent !important;
           }
           .react-datepicker__navigation {
             top: 1rem;
+            width: 0 !important;
+            line-height: 1.7rem !important;
           }
           .react-datepicker__navigation--previous {
             left: 1rem;
@@ -704,20 +709,29 @@ function getPhilippineDateStr() {
             right: 1rem;
           }
           .react-datepicker__navigation-icon::before {
-            border-color: white;
+            border-color: white !important;
           }
           .react-datepicker {
-            background-color: white;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(42, 63, 157, 0.2);
-            font-family: 'Inter Tight, Inter, Segoe UI, sans-serif';
-            padding: 1rem;
+            background-color: white !important;
+            border: 2px solid #e5e7eb !important;
+            border-radius: 12px !important;
+            box-shadow: 0 10px 30px rgba(42, 63, 157, 0.3) !important;
+            font-family: 'Inter Tight, Inter, Segoe UI, sans-serif' !important;
+            padding: 1rem !important;
             z-index: 9999 !important;
-            position: absolute;
+            width: auto !important;
+            margin: 0 !important;
+          }
+          .react-datepicker__month-container {
+            width: 100% !important;
+          }
+          .react-datepicker__week {
+            display: flex !important;
+            justify-content: center !important;
           }
           .react-datepicker-popper {
             z-index: 9999 !important;
+            width: auto !important;
           }
         `}
       </style>
@@ -1433,7 +1447,8 @@ function getPhilippineDateStr() {
     overflow: 'visible',
     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
     position: 'relative',
-    zIndex: 10
+    zIndex: 10,
+    isolation: 'isolate'
   }}>
     <div style={{
       padding: '1.5rem 2rem',
@@ -1461,7 +1476,9 @@ function getPhilippineDateStr() {
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        gap: '0.5rem'
+        gap: '0.5rem',
+        position: 'relative',
+        zIndex: 100
       }}>
         <label style={{
           color: 'white',
@@ -1472,31 +1489,34 @@ function getPhilippineDateStr() {
         }}>
           Select Date:
         </label>
-        <DatePicker
-          selected={appointmentDate}
-          onChange={(date) => {
-            setAppointmentDate(date);
-            fetchTodayAppointments(date);
-          }}
-          minDate={moment().tz('Asia/Manila').toDate()}
-          dateFormat="yyyy-MM-dd"
-          className="appointment-date-picker"
-          popperPlacement="bottom-end"
-          popperModifiers={[
-            {
-              name: 'offset',
-              options: {
-                offset: [0, 10]
+        <div style={{ position: 'relative', zIndex: 101 }}>
+          <DatePicker
+            selected={appointmentDate}
+            onChange={(date) => {
+              setAppointmentDate(date);
+              fetchTodayAppointments(date);
+            }}
+            minDate={moment().tz('Asia/Manila').toDate()}
+            dateFormat="yyyy-MM-dd"
+            className="appointment-date-picker"
+            popperPlacement="bottom"
+            popperModifiers={[
+              {
+                name: 'offset',
+                options: {
+                  offset: [0, 15]
+                }
+              },
+              {
+                name: 'preventOverflow',
+                options: {
+                  padding: 16,
+                  rootBoundary: 'viewport'
+                }
               }
-            },
-            {
-              name: 'preventOverflow',
-              options: {
-                padding: 8
-              }
-            }
-          ]}
-        />
+            ]}
+          />
+        </div>
       </div>
     </div>
     <div style={{ padding: '0' }}>

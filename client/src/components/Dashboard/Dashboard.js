@@ -713,6 +713,11 @@ function getPhilippineDateStr() {
             box-shadow: 0 10px 30px rgba(42, 63, 157, 0.2);
             font-family: 'Inter Tight, Inter, Segoe UI, sans-serif';
             padding: 1rem;
+            z-index: 9999 !important;
+            position: absolute;
+          }
+          .react-datepicker-popper {
+            z-index: 9999 !important;
           }
         `}
       </style>
@@ -1425,8 +1430,10 @@ function getPhilippineDateStr() {
     borderRadius: '20px',
     border: '1px solid rgba(42, 63, 157, 0.08)',
     boxShadow: '0 8px 32px rgba(42, 63, 157, 0.12), 0 2px 8px rgba(0, 0, 0, 0.04)',
-    overflow: 'hidden',
-    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+    overflow: 'visible',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    position: 'relative',
+    zIndex: 10
   }}>
     <div style={{
       padding: '1.5rem 2rem',

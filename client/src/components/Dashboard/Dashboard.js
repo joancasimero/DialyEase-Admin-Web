@@ -73,7 +73,7 @@ const Dashboard = () => {
         headers: getAuthHeader()
       });
 
-      console.log('Slot Response:', response.data);
+      console.log('Full Slot Response:', response.data);
 
       if (response.data) {
         // Extract booked slots from morning and afternoon arrays
@@ -82,14 +82,26 @@ const Dashboard = () => {
         // Process morning slots
         if (response.data.morning && Array.isArray(response.data.morning)) {
           response.data.morning.forEach(slot => {
-            if (slot.isBooked && slot.patient) {
+            console.log('Morning slot:', slot);
+            if (slot.isBooked) {
+              // Handle different patient name structures
+              let patientName = 'Unassigned';
+              if (slot.patient) {
+                if (slot.patient.firstName && slot.patient.lastName) {
+                  patientName = `${slot.patient.firstName} ${slot.patient.lastName}`;
+                } else if (slot.patient.name) {
+                  patientName = slot.patient.name;
+                }
+              }
+              
               bookedAppointments.push({
                 ...slot,
                 timeSlot: 'morning',
                 timeString: 'Morning (8:00 AM - 12:00 PM)',
-                patientName: `${slot.patient.firstName} ${slot.patient.lastName}`,
+                patientName: patientName,
                 machine: slot.machine?.name || 'N/A'
               });
+              console.log('Added morning appointment:', patientName);
             }
           });
         }
@@ -97,20 +109,32 @@ const Dashboard = () => {
         // Process afternoon slots
         if (response.data.afternoon && Array.isArray(response.data.afternoon)) {
           response.data.afternoon.forEach(slot => {
-            if (slot.isBooked && slot.patient) {
+            console.log('Afternoon slot:', slot);
+            if (slot.isBooked) {
+              // Handle different patient name structures
+              let patientName = 'Unassigned';
+              if (slot.patient) {
+                if (slot.patient.firstName && slot.patient.lastName) {
+                  patientName = `${slot.patient.firstName} ${slot.patient.lastName}`;
+                } else if (slot.patient.name) {
+                  patientName = slot.patient.name;
+                }
+              }
+              
               bookedAppointments.push({
                 ...slot,
                 timeSlot: 'afternoon',
                 timeString: 'Afternoon (1:00 PM - 5:00 PM)',
-                patientName: `${slot.patient.firstName} ${slot.patient.lastName}`,
+                patientName: patientName,
                 machine: slot.machine?.name || 'N/A'
               });
+              console.log('Added afternoon appointment:', patientName);
             }
           });
         }
         
         setTodayAppointments(bookedAppointments);
-        console.log('Booked appointments loaded:', bookedAppointments.length);
+        console.log('Total booked appointments loaded:', bookedAppointments.length);
       } else {
         setTodayAppointments([]);
         console.log('No slot data found');

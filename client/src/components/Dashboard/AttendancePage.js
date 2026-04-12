@@ -8,6 +8,7 @@ import Modal from 'react-bootstrap/Modal';
 
 const AttendancePage = () => {
   const [attendance, setAttendance] = useState([]);
+  const [machines, setMachines] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(null);
   const [statusFilter, setStatusFilter] = useState('all');
@@ -27,6 +28,17 @@ const AttendancePage = () => {
   const getPhilippineDateStr = (date = new Date()) => {
     return date.toLocaleDateString('en-CA', { timeZone: 'Asia/Manila' });
   };
+
+  const fetchMachines = useCallback(async () => {
+    try {
+      const response = await api.get('/machines', {
+        headers: getAuthHeader()
+      });
+      setMachines(response.data || []);
+    } catch (err) {
+      console.error('Error fetching machines:', err);
+    }
+  }, []);
 
   const fetchAttendance = useCallback(async () => {
     setLoading(true);
@@ -98,8 +110,9 @@ const AttendancePage = () => {
   }, [selectedDate, statusFilter]);
 
   useEffect(() => {
+    fetchMachines();
     fetchAttendance();
-  }, [fetchAttendance]);
+  }, [fetchAttendance, fetchMachines]);
 
   const handleExportPDF = async () => {
     setExportError('');
@@ -473,7 +486,12 @@ const AttendancePage = () => {
                               {rec.patient?.firstName} {rec.patient?.lastName}
                             </div>
                             <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.15rem' }}>
-                              PID: {rec.patient?.pidNumber || 'N/A'}
+                              {(() => {
+                                const machineId = rec.patient?.assignedMachine?._id || rec.patient?.assignedMachine;
+                                const machine = machines.find(m => m._id === machineId);
+                                const machineName = machine ? machine.name : (machineId ? `Machine ${machineId.slice(-4)}` : 'N/A');
+                                return `${machineName} • PID: ${rec.patient?.pidNumber || 'N/A'}`;
+                              })()}
                             </div>
                           </div>
                         </div>

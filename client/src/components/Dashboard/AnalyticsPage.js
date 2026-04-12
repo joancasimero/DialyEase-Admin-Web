@@ -1113,9 +1113,9 @@ const AnalyticsPage = () => {
                             </div>
                           </div>
                           <div style={{
-                            backgroundColor: '#2a3f9d',
-                            color: 'white',
-                            borderRadius: '50%',
+                            backgroundColor: '#f0f4ff',
+                            color: '#2a3f9d',
+                            borderRadius: '8px',
                             width: '40px',
                             height: '40px',
                             display: 'flex',

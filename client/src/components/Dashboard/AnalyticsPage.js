@@ -400,8 +400,7 @@ const AnalyticsPage = () => {
         percentage: patients.length > 0 ? Math.round((count / patients.length) * 100) : 0,
         patients: hospitalPatients[hospital] || []
       }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 3);
+      .sort((a, b) => b.count - a.count);
 
     // Gender distribution calculation
     const genderDistribution = {};

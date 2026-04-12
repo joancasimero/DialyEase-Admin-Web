@@ -1001,7 +1001,10 @@ const AnalyticsPage = () => {
               <Modal.Header closeButton>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', width: '100%' }}>
                   <button
-                    onClick={() => setSelectedHospital(null)}
+                    onClick={() => {
+                      setSelectedHospital(null);
+                      setShowHospitalsListModal(true);
+                    }}
                     style={{
                       backgroundColor: 'transparent',
                       border: 'none',
@@ -1071,7 +1074,10 @@ const AnalyticsPage = () => {
               </Modal.Body>
               <Modal.Footer>
                 <button 
-                  onClick={() => setSelectedHospital(null)}
+                  onClick={() => {
+                    setSelectedHospital(null);
+                    setShowHospitalsListModal(true);
+                  }}
                   style={{
                     padding: '0.5rem 1.5rem',
                     backgroundColor: '#2a3f9d',

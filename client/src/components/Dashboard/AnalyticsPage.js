@@ -586,46 +586,6 @@ const AnalyticsPage = () => {
           </div>
         </div>
 
-        {/* Appointment Analytics Section */}
-        <div className="analytics-section">
-          <h2 className="section-title">Appointment Analytics</h2>
-          <div className="analytics-cards-container">
-            {/* Completed Appointments */}
-            <div className="analytics-card-simple completed-card">
-              <div className="analytics-icon">
-                <FiCheck size={28} />
-              </div>
-              <h3 className="analytics-title-simple">Completed</h3>
-              <p className="analytics-value-simple">{stats.appointmentsCompleted}</p>
-              <p className="analytics-description-simple">Completed</p>
-            </div>
-
-            {/* Pending Appointments */}
-            <div className="analytics-card-simple pending-card">
-              <div className="analytics-icon">
-                <FiClock size={28} />
-              </div>
-              <h3 className="analytics-title-simple">Pending</h3>
-              <p className="analytics-value-simple">{stats.appointmentsPending}</p>
-              <p className="analytics-description-simple">Pending</p>
-            </div>
-
-            {/* Conversion Rate */}
-            <div className="analytics-card-simple conversion-card">
-              <div className="analytics-icon">
-                <FiTrendingUp size={28} />
-              </div>
-              <h3 className="analytics-title-simple">Conversion</h3>
-              <p className="analytics-value-simple">
-                {appointments.length > 0 
-                  ? Math.round((stats.appointmentsCompleted / appointments.length) * 100) 
-                  : 0}%
-              </p>
-              <p className="analytics-description-simple">Rate</p>
-            </div>
-          </div>
-        </div>
-
         {/* Patient Status Section */}
         <div className="analytics-section">
           <h2 className="section-title">Patient Status Overview</h2>

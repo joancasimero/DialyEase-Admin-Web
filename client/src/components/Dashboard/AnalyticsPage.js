@@ -1074,7 +1074,7 @@ const AnalyticsPage = () => {
                 <Modal.Title>All Referral Hospitals</Modal.Title>
               </Modal.Header>
               <Modal.Body>
-                <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
+                <div style={{ maxHeight: '500px', overflowY: 'auto', overflowX: 'hidden' }}>
                   {stats.topHospitals && stats.topHospitals.length > 0 ? (
                     <div>
                       {stats.topHospitals.map((hospital, index) => (

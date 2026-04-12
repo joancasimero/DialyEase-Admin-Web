@@ -999,7 +999,25 @@ const AnalyticsPage = () => {
           {selectedHospital && (
             <Modal show={true} onHide={() => setSelectedHospital(null)} size="lg" centered>
               <Modal.Header closeButton>
-                <Modal.Title>{selectedHospital.hospital}</Modal.Title>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', width: '100%' }}>
+                  <button
+                    onClick={() => setSelectedHospital(null)}
+                    style={{
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '1.5rem',
+                      color: '#1f2937',
+                      padding: '0',
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}
+                    title="Go back to hospital list"
+                  >
+                    ←
+                  </button>
+                  <Modal.Title>{selectedHospital.hospital}</Modal.Title>
+                </div>
               </Modal.Header>
               <Modal.Body>
                 <div style={{ marginBottom: '1rem' }}>
@@ -1056,15 +1074,15 @@ const AnalyticsPage = () => {
                   onClick={() => setSelectedHospital(null)}
                   style={{
                     padding: '0.5rem 1.5rem',
-                    backgroundColor: '#e5e7eb',
-                    color: '#1f2937',
+                    backgroundColor: '#2a3f9d',
+                    color: 'white',
                     border: 'none',
                     borderRadius: '6px',
                     cursor: 'pointer',
                     fontWeight: '600'
                   }}
                 >
-                  Close
+                  Back to List
                 </button>
               </Modal.Footer>
             </Modal>

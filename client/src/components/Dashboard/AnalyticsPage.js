@@ -316,7 +316,12 @@ const AnalyticsPage = () => {
         (machineId ? monthlyByMachineId.get(machineId) : undefined) ||
         (machineName ? monthlyByMachineName.get(machineName) : undefined) ||
         0;
-      const monthlyUtilization = (monthlyAppointments / (30 * 30)) * 100; // ~30 days * 30 slots per day
+      
+      // Each machine has 2 slots per day (1 morning + 1 afternoon) across the whole month
+      const daysInMonth = now.daysInMonth(); // April = 30 days
+      const slotsPerDay = 2; // 1 morning + 1 afternoon slot per machine per day
+      const maxMonthlyCapacity = daysInMonth * slotsPerDay; // 60 slots max for April
+      const monthlyUtilization = (monthlyAppointments / maxMonthlyCapacity) * 100;
 
       const util = {
         _id: machineId,
@@ -329,7 +334,7 @@ const AnalyticsPage = () => {
       };
 
       if (monthlyAppointments > 0) {
-        console.log(`📊 ${machine.name}: ${monthlyAppointments} monthly appointments = ${util.monthlyUtilization}%`);
+        console.log(`📊 ${machine.name}: ${monthlyAppointments} appointments / ${maxMonthlyCapacity} capacity = ${util.monthlyUtilization}%`);
       }
 
       return util;

@@ -216,10 +216,24 @@ router.get('/', protect, async (req, res) => {
       filter.date = { $regex: `^${year}-${monthStr}-` };
     }
 
+    console.log('🔍 Fetching slots with filter:', JSON.stringify(filter));
+
     const slots = await AppointmentSlot.find(filter)
       .populate('machine', 'name isActive')
       .populate('patient', 'firstName lastName pidNumber')
       .sort({ date: 1, timeSlot: 1, slotNumber: 1 });
+
+    console.log(`✅ Found ${slots.length} slots matching filter`);
+    
+    if (slots.length > 0) {
+      console.log('📌 Sample slots:', slots.slice(0, 3).map(s => ({
+        date: s.date,
+        machine: s.machine?.name,
+        isBooked: s.isBooked,
+        status: s.status,
+        patient: s.patient?.firstName
+      })));
+    }
 
     res.json(slots);
   } catch (err) {

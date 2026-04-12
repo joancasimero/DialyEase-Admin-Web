@@ -441,6 +441,8 @@ const AnalyticsPage = () => {
       }))
       .sort((a, b) => b.count - a.count);
 
+    console.log('🏥 Comorbidities with patient data:', comorbidities);
+
     setStats({
       totalPatients: patients.length,
       newPatientsThisMonth,
@@ -758,7 +760,10 @@ const AnalyticsPage = () => {
                           <div 
                             key={comorbidity.condition} 
                             className="comorbidity-item"
-                            onClick={() => setSelectedComorbidity(comorbidity)}
+                            onClick={() => {
+                              console.log('Clicked comorbidity:', comorbidity);
+                              setSelectedComorbidity(comorbidity);
+                            }}
                             style={{ cursor: 'pointer' }}
                           >
                             <div className="comorbidity-header">
@@ -843,39 +848,47 @@ const AnalyticsPage = () => {
                   </p>
                 </div>
                 <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                    <thead>
-                      <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
-                        <th style={{ padding: '0.75rem', textAlign: 'left', fontWeight: '600', color: '#1f2937' }}>Patient Name</th>
-                        <th style={{ padding: '0.75rem', textAlign: 'left', fontWeight: '600', color: '#1f2937' }}>Age</th>
-                        <th style={{ padding: '0.75rem', textAlign: 'left', fontWeight: '600', color: '#1f2937' }}>Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {selectedComorbidity.patients.map((patient) => {
-                        const age = patient.birthday ? Math.floor(moment().diff(moment(patient.birthday), 'years')) : 'N/A';
-                        const fullName = `${patient.firstName || ''} ${patient.lastName || ''}`.trim() || 'N/A';
-                        return (
-                          <tr key={patient._id} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                            <td style={{ padding: '0.75rem', color: '#374151' }}>{fullName}</td>
-                            <td style={{ padding: '0.75rem', color: '#374151' }}>{age}</td>
-                            <td style={{ padding: '0.75rem' }}>
-                              <span style={{
-                                padding: '0.25rem 0.75rem',
-                                borderRadius: '4px',
-                                fontSize: '0.85rem',
-                                fontWeight: '600',
-                                backgroundColor: patient.archived ? '#fee2e2' : '#dcfce7',
-                                color: patient.archived ? '#991b1b' : '#166534'
-                              }}>
-                                {patient.archived ? 'Inactive' : 'Active'}
-                              </span>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+                  {selectedComorbidity.patients && selectedComorbidity.patients.length > 0 ? (
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                      <thead>
+                        <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
+                          <th style={{ padding: '0.75rem', textAlign: 'left', fontWeight: '600', color: '#1f2937' }}>Patient Name</th>
+                          <th style={{ padding: '0.75rem', textAlign: 'left', fontWeight: '600', color: '#1f2937' }}>Age</th>
+                          <th style={{ padding: '0.75rem', textAlign: 'left', fontWeight: '600', color: '#1f2937' }}>Hospital</th>
+                          <th style={{ padding: '0.75rem', textAlign: 'left', fontWeight: '600', color: '#1f2937' }}>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedComorbidity.patients.map((patient) => {
+                          const age = patient.birthday ? Math.floor(moment().diff(moment(patient.birthday), 'years')) : 'N/A';
+                          const fullName = `${patient.firstName || ''} ${patient.lastName || ''}`.trim() || 'N/A';
+                          return (
+                            <tr key={patient._id} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                              <td style={{ padding: '0.75rem', color: '#374151' }}>{fullName}</td>
+                              <td style={{ padding: '0.75rem', color: '#374151' }}>{age}</td>
+                              <td style={{ padding: '0.75rem', color: '#374151' }}>{patient.hospital || 'N/A'}</td>
+                              <td style={{ padding: '0.75rem' }}>
+                                <span style={{
+                                  padding: '0.25rem 0.75rem',
+                                  borderRadius: '4px',
+                                  fontSize: '0.85rem',
+                                  fontWeight: '600',
+                                  backgroundColor: patient.archived ? '#fee2e2' : '#dcfce7',
+                                  color: patient.archived ? '#991b1b' : '#166534'
+                                }}>
+                                  {patient.archived ? 'Inactive' : 'Active'}
+                                </span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <p style={{ textAlign: 'center', color: '#9ca3af', padding: '1rem' }}>
+                      No patient data available for this comorbidity
+                    </p>
+                  )}
                 </div>
               </Modal.Body>
               <Modal.Footer>

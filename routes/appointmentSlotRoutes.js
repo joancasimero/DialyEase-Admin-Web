@@ -203,6 +203,31 @@ router.post('/:id/toggle-disable', protect, async (req, res) => {
   }
 });
 
+// Get appointment slots, optionally filtered by date or month/year
+router.get('/', protect, async (req, res) => {
+  try {
+    const { date, month, year } = req.query;
+    const filter = {};
+
+    if (date) {
+      filter.date = date;
+    } else if (month && year) {
+      const monthStr = month.toString().padStart(2, '0');
+      filter.date = { $regex: `^${year}-${monthStr}-` };
+    }
+
+    const slots = await AppointmentSlot.find(filter)
+      .populate('machine', 'name isActive')
+      .populate('patient', 'firstName lastName pidNumber')
+      .sort({ date: 1, timeSlot: 1, slotNumber: 1 });
+
+    res.json(slots);
+  } catch (err) {
+    console.error('Error fetching appointment slots:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // Initialize slots for a specific date
 router.post('/initialize-slots', protect, async (req, res) => {
   try {

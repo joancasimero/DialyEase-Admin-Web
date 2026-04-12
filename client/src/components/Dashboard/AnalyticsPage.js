@@ -80,8 +80,13 @@ const AnalyticsPage = () => {
 
   const fetchAppointments = useCallback(async () => {
     try {
+      const now = moment().tz('Asia/Manila');
       const res = await api.get('/appointment-slots', {
-        headers: getAuthHeader()
+        headers: getAuthHeader(),
+        params: {
+          month: now.format('M'),
+          year: now.format('YYYY')
+        }
       });
       setAppointments(res.data || []);
     } catch (err) {

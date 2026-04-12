@@ -152,7 +152,12 @@ router.get('/', protect, async (req, res) => {
   }
 
   // Support date-based query for dashboard
-  const { date, month, year } = req.query;
+  const { date, month, year, status } = req.query;
+  const normalizedStatus = typeof status === 'string' ? status.toLowerCase() : undefined;
+
+  if (normalizedStatus && !['all', 'present', 'absent'].includes(normalizedStatus)) {
+    return res.status(400).json({ message: 'Invalid status filter. Use all, present, or absent.' });
+  }
 
   const filter = {};
   if (patientId) filter.patient = patientId;
@@ -163,7 +168,57 @@ router.get('/', protect, async (req, res) => {
     filter.date = { $regex: `^${year}-${monthStr}-` };
   }
 
+  if (normalizedStatus && normalizedStatus !== 'all') {
+    filter.status = normalizedStatus;
+  }
+
   try {
+    // For admin-facing absent filter, derive absences from booked slots with no present check-in.
+    if (req.userType !== 'patient' && normalizedStatus === 'absent') {
+      const targetDate = date || getPhilippineDateStr();
+
+      const absentFilter = { ...filter, date: targetDate, status: 'absent' };
+      const explicitAbsentRecords = await Attendance.find(absentFilter).populate('patient');
+
+      const presentFilter = { date: targetDate, status: 'present' };
+      if (patientId) presentFilter.patient = patientId;
+      const presentRecords = await Attendance.find(presentFilter).select('patient');
+
+      const slotFilter = {
+        date: targetDate,
+        isBooked: true,
+        patient: { $ne: null },
+        status: { $in: ['booked', 'completed'] }
+      };
+      if (patientId) slotFilter.patient = patientId;
+
+      const bookedSlots = await AppointmentSlot.find(slotFilter).populate('patient');
+
+      const presentPatientIds = new Set(presentRecords.map(rec => rec.patient?.toString()).filter(Boolean));
+      const explicitAbsentPatientIds = new Set(explicitAbsentRecords.map(rec => rec.patient?._id?.toString()).filter(Boolean));
+
+      const derivedAbsentRecords = [];
+      const seenDerivedPatientIds = new Set();
+
+      bookedSlots.forEach((slot) => {
+        const slotPatientId = slot.patient?._id?.toString();
+        if (!slotPatientId || seenDerivedPatientIds.has(slotPatientId)) return;
+        if (presentPatientIds.has(slotPatientId) || explicitAbsentPatientIds.has(slotPatientId)) return;
+
+        seenDerivedPatientIds.add(slotPatientId);
+        derivedAbsentRecords.push({
+          _id: `derived-absent-${slotPatientId}-${targetDate}`,
+          patient: slot.patient,
+          date: targetDate,
+          status: 'absent',
+          time: null,
+          derived: true
+        });
+      });
+
+      return res.json([...explicitAbsentRecords, ...derivedAbsentRecords]);
+    }
+
     const records = await Attendance.find(filter).populate('patient');
     res.json(records);
   } catch (err) {

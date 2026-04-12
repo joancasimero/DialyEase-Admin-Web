@@ -246,7 +246,6 @@ const AppointmentSlotTracker = ({ authToken }) => {
       return numA - numB;
     });
   };
-  };
 
   const styles = {
     card: {

@@ -69,34 +69,40 @@ const AttendancePage = () => {
       ]);
 
       if (statusFilter === 'absent') {
-        const bookedSlots = [
-          ...(slotsRes.data?.morning || []),
-          ...(slotsRes.data?.afternoon || [])
-        ].filter(slot => slot.isBooked && slot.patient);
+        try {
+          const bookedSlots = [
+            ...(slotsRes.data?.morning || []),
+            ...(slotsRes.data?.afternoon || [])
+          ].filter(slot => slot.isBooked && slot.patient);
 
-        const presentPatientIds = new Set(
-          (attendanceRes.data || [])
-            .filter(record => record.status === 'present')
-            .map(record => record.patient?._id || record.patient?.id || record.patient)
-            .filter(Boolean)
-            .map(String)
-        );
+          const presentPatientIds = new Set(
+            (attendanceRes.data || [])
+              .filter(record => record.status === 'present')
+              .map(record => record.patient?._id || record.patient?.id || record.patient)
+              .filter(Boolean)
+              .map(String)
+          );
 
-        const absentRows = bookedSlots
-          .filter(slot => {
-            const patientId = slot.patient?._id || slot.patient?.id;
-            return patientId && !presentPatientIds.has(String(patientId));
-          })
-          .map(slot => ({
-            _id: `absent-${slot._id}`,
-            patient: slot.patient,
-            date: targetDate,
-            status: 'absent',
-            time: null,
-            derived: true
-          }));
+          const absentRows = bookedSlots
+            .filter(slot => {
+              const patientId = slot.patient?._id || slot.patient?.id;
+              return patientId && !presentPatientIds.has(String(patientId));
+            })
+            .map(slot => ({
+              _id: `absent-${slot._id}`,
+              patient: slot.patient,
+              date: targetDate,
+              status: 'absent',
+              time: null,
+              derived: true
+            }));
 
-        setAttendance(absentRows);
+          setAttendance(absentRows);
+        } catch (err) {
+          console.error('Error processing absent records:', err);
+          setAttendance([]);
+        }
+        setLoading(false);
         return;
       }
 
@@ -106,7 +112,9 @@ const AttendancePage = () => {
         setAttendance(attendanceRes.data || []);
       }
     } catch (err) {
+      console.error('Error fetching attendance:', err);
       setError('Failed to fetch attendance records');
+      setAttendance([]);
     }
     setLoading(false);
   }, [selectedDate, statusFilter]);

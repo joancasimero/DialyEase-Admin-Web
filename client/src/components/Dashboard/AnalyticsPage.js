@@ -81,14 +81,48 @@ const AnalyticsPage = () => {
   const fetchAppointments = useCallback(async () => {
     try {
       const now = moment().tz('Asia/Manila');
-      const res = await api.get('/appointment-slots', {
-        headers: getAuthHeader(),
-        params: {
-          month: now.format('M'),
-          year: now.format('YYYY')
+      let appointmentSlots = [];
+
+      try {
+        const res = await api.get('/appointment-slots', {
+          headers: getAuthHeader(),
+          params: {
+            month: now.format('M'),
+            year: now.format('YYYY')
+          }
+        });
+        appointmentSlots = Array.isArray(res.data) ? res.data : [];
+      } catch (primaryErr) {
+        console.warn('Primary monthly slot endpoint failed, falling back to per-date fetch:', primaryErr);
+      }
+
+      // Fallback: use the same date endpoint powering Slot Tracker so analytics matches tracker data.
+      if (appointmentSlots.length === 0) {
+        const daysInMonth = now.daysInMonth();
+        const dateRequests = [];
+
+        for (let day = 1; day <= daysInMonth; day++) {
+          const dateStr = now.clone().date(day).format('YYYY-MM-DD');
+          dateRequests.push(
+            api.get(`/appointment-slots/date/${dateStr}`, {
+              headers: getAuthHeader()
+            })
+          );
         }
-      });
-      setAppointments(res.data || []);
+
+        const dateResults = await Promise.allSettled(dateRequests);
+
+        appointmentSlots = dateResults.flatMap((result) => {
+          if (result.status !== 'fulfilled') {
+            return [];
+          }
+
+          const payload = result.value?.data || {};
+          return [...(payload.morning || []), ...(payload.afternoon || [])];
+        });
+      }
+
+      setAppointments(appointmentSlots);
     } catch (err) {
       console.error('Error fetching appointments:', err);
       setError('Failed to load appointment data');

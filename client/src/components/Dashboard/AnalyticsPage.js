@@ -50,7 +50,7 @@ const AnalyticsPage = () => {
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [showHospitalsListModal, setShowHospitalsListModal] = useState(false);
   const [hospitalSearchTerm, setHospitalSearchTerm] = useState('');
-  const [hospitalSortOrder, setHospitalSortOrder] = useState('asc');
+  const [hospitalSortMode, setHospitalSortMode] = useState('top');
 
   const getAuthHeader = () => {
     const admin = JSON.parse(localStorage.getItem('admin'));
@@ -1072,9 +1072,6 @@ const AnalyticsPage = () => {
 
           {showHospitalsListModal && (
             <Modal show={true} onHide={() => {setShowHospitalsListModal(false); setHospitalSearchTerm('');}} size="lg" centered>
-              <Modal.Header closeButton>
-                <Modal.Title>All Referral Hospitals</Modal.Title>
-              </Modal.Header>
               <Modal.Body>
                 <div style={{ marginBottom: '1rem' }}>
                   <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem' }}>
@@ -1092,8 +1089,9 @@ const AnalyticsPage = () => {
                         fontFamily: 'inherit'
                       }}
                     />
-                    <button
-                      onClick={() => setHospitalSortOrder(hospitalSortOrder === 'asc' ? 'desc' : 'asc')}
+                    <select
+                      value={hospitalSortMode}
+                      onChange={(e) => setHospitalSortMode(e.target.value)}
                       style={{
                         padding: '0.75rem 1.5rem',
                         backgroundColor: '#2a3f9d',
@@ -1103,13 +1101,13 @@ const AnalyticsPage = () => {
                         cursor: 'pointer',
                         fontWeight: '600',
                         fontSize: '0.95rem',
-                        transition: 'all 0.3s ease'
+                        fontFamily: 'inherit'
                       }}
-                      onMouseEnter={(e) => e.target.style.backgroundColor = '#1f2d6d'}
-                      onMouseLeave={(e) => e.target.style.backgroundColor = '#2a3f9d'}
                     >
-                      {hospitalSortOrder === 'asc' ? 'A-Z' : 'Z-A'}
-                    </button>
+                      <option value="top">Top Hospitals</option>
+                      <option value="asc">A-Z</option>
+                      <option value="desc">Z-A</option>
+                    </select>
                   </div>
                 </div>
                 <div style={{ maxHeight: '500px', overflowY: 'auto', overflowX: 'hidden' }}>
@@ -1119,10 +1117,13 @@ const AnalyticsPage = () => {
                     );
                     
                     const sortedHospitals = [...filteredHospitals].sort((a, b) => {
-                      if (hospitalSortOrder === 'asc') {
+                      if (hospitalSortMode === 'asc') {
                         return a.hospital.localeCompare(b.hospital);
-                      } else {
+                      } else if (hospitalSortMode === 'desc') {
                         return b.hospital.localeCompare(a.hospital);
+                      } else {
+                        // Top Hospitals - sort by count descending
+                        return b.count - a.count;
                       }
                     });
 

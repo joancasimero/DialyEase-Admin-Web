@@ -407,6 +407,7 @@ const AttendancePage = () => {
               <thead style={styles.tableHeader}>
                 <tr>
                   <th style={{ padding: '1.25rem 1.5rem', textAlign: 'left', borderBottom: '2px solid rgba(42, 63, 157, 0.15)' }}>Patient</th>
+                  <th style={{ padding: '1.25rem 1.5rem', textAlign: 'center', borderBottom: '2px solid rgba(42, 63, 157, 0.15)' }}>Machine</th>
                   <th style={{ padding: '1.25rem 1.5rem', textAlign: 'center', borderBottom: '2px solid rgba(42, 63, 157, 0.15)' }}>Date</th>
                   <th style={{ padding: '1.25rem 1.5rem', textAlign: 'center', borderBottom: '2px solid rgba(42, 63, 157, 0.15)' }}>Status</th>
                   <th style={{ padding: '1.25rem 1.5rem', textAlign: 'center', borderBottom: '2px solid rgba(42, 63, 157, 0.15)' }}>Check-in Time</th>
@@ -415,7 +416,7 @@ const AttendancePage = () => {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan={4} style={{ textAlign: 'center', padding: '3rem' }}>
+                    <td colSpan={5} style={{ textAlign: 'center', padding: '3rem' }}>
                       <div style={{
                         width: '48px',
                         height: '48px',
@@ -435,7 +436,7 @@ const AttendancePage = () => {
                   </tr>
                 ) : attendance.length === 0 ? (
                   <tr>
-                    <td colSpan={4} style={{ textAlign: 'center', padding: '3rem' }}>
+                    <td colSpan={5} style={{ textAlign: 'center', padding: '3rem' }}>
                       <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ opacity: 0.3, margin: '0 auto 1rem', display: 'block' }}>
                         <path d="M9 11l3 3L22 4" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -496,20 +497,30 @@ const AttendancePage = () => {
                               {rec.patient?.firstName} {rec.patient?.lastName}
                             </div>
                             <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.15rem' }}>
-                              {(() => {
-                                const machineId = rec.patient?.assignedMachine?._id || rec.patient?.assignedMachine;
-                                const machine = machines.find(m => m._id === machineId);
-                                const machineName = machine ? machine.name : (machineId ? `Machine ${machineId.slice(-4)}` : 'N/A');
-                                return `${machineName} • PID: ${rec.patient?.pidNumber || 'N/A'}`;
-                              })()}
+                              PID: {rec.patient?.pidNumber || 'N/A'}
                             </div>
                           </div>
                         </div>
                       </td>
-                      <td style={{ 
+                      <td style={{
                         padding: '1.25rem 1.5rem',
-                        textAlign: 'center', 
-                        fontWeight: 600, 
+                        textAlign: 'center',
+                        fontWeight: 600,
+                        color: '#374151',
+                        fontSize: '0.9rem',
+                        fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif'
+                      }}>
+                        {(() => {
+                          const machineId = rec.patient?.assignedMachine?._id || rec.patient?.assignedMachine;
+                          const machine = machines.find(m => m._id === machineId);
+                          const machineName = machine ? machine.name : (machineId ? `Machine ${machineId.slice(-4)}` : 'N/A');
+                          return machineName;
+                        })()}
+                      </td>
+                      <td style={{
+                        padding: '1.25rem 1.5rem',
+                        textAlign: 'center',
+                        fontWeight: 600,
                         color: '#374151',
                         fontSize: '0.9rem',
                         fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif'

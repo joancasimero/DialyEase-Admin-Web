@@ -908,13 +908,6 @@ const AnalyticsPage = () => {
                               <p className="stat-detail-value">{selectedMachine.monthlyAppointments}</p>
                             </div>
                           </div>
-                          <div className="stat-detail-item">
-                            <span className="stat-detail-icon">🎯</span>
-                            <div className="stat-detail-content">
-                              <p className="stat-detail-label">Average Per Day</p>
-                              <p className="stat-detail-value">{Math.round(selectedMachine.monthlyAppointments / 30)}</p>
-                            </div>
-                          </div>
                         </div>
                       </div>
                     ) : null;

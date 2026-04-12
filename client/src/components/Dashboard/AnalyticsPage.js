@@ -386,12 +386,12 @@ const AnalyticsPage = () => {
     const hospitalCounts = {};
     const hospitalPatients = {};
     patients.forEach(patient => {
-      if (patient.hospital) {
-        hospitalCounts[patient.hospital] = (hospitalCounts[patient.hospital] || 0) + 1;
-        if (!hospitalPatients[patient.hospital]) {
-          hospitalPatients[patient.hospital] = [];
+      if (patient.referredBy) {
+        hospitalCounts[patient.referredBy] = (hospitalCounts[patient.referredBy] || 0) + 1;
+        if (!hospitalPatients[patient.referredBy]) {
+          hospitalPatients[patient.referredBy] = [];
         }
-        hospitalPatients[patient.hospital].push(patient);
+        hospitalPatients[patient.referredBy].push(patient);
       }
     });
     const topHospitals = Object.entries(hospitalCounts)
@@ -976,29 +976,56 @@ const AnalyticsPage = () => {
               </Col>
             )}
           </Row>
-          <Row style={{ marginTop: '1rem' }}>
-            <Col lg={12}>
-              <button 
-                onClick={() => setShowHospitalsListModal(true)}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  backgroundColor: '#2a3f9d',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontSize: '0.95rem',
-                  fontWeight: '600',
-                  transition: 'all 0.3s ease'
-                }}
-                onMouseEnter={(e) => e.target.style.backgroundColor = '#1f2d6d'}
-                onMouseLeave={(e) => e.target.style.backgroundColor = '#2a3f9d'}
-              >
-                See More
-              </button>
+          {stats.topHospitals.length > 3 && !showAllHospitals && (
+            <Row style={{ marginTop: '1rem' }}>
+              <Col lg={12}>
+                <button 
+                  onClick={() => setShowHospitalsListModal(true)}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    backgroundColor: '#2a3f9d',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '0.95rem',
+                    fontWeight: '600',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => e.target.style.backgroundColor = '#1f2d6d'}
+                  onMouseLeave={(e) => e.target.style.backgroundColor = '#2a3f9d'}
+                >
+                  See More ({stats.topHospitals.length - 3} more)
+                </button>
               </Col>
             </Row>
+          )}
+          {showAllHospitals && stats.topHospitals.length > 3 && (
+            <Row style={{ marginTop: '1rem' }}>
+              <Col lg={12}>
+                <button 
+                  onClick={() => setShowAllHospitals(false)}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    backgroundColor: '#718096',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '0.95rem',
+                    fontWeight: '600',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => e.target.style.backgroundColor = '#4a5568'}
+                  onMouseLeave={(e) => e.target.style.backgroundColor = '#718096'}
+                >
+                  Show Less
+                </button>
+              </Col>
+            </Row>
+          )}
 
           {selectedHospital && (
             <Modal show={true} onHide={() => setSelectedHospital(null)} size="lg" centered>

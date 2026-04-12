@@ -7,6 +7,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Modal from 'react-bootstrap/Modal';
 
 const AttendancePage = () => {
+  // Version: Filter dropdowns removed
   const [attendance, setAttendance] = useState([]);
   const [machines, setMachines] = useState([]);
   const [loading, setLoading] = useState(true);

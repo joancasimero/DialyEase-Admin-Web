@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Row, Col, Card, Spinner, Alert } from 'react-bootstrap';
+import { Row, Col, Card, Spinner, Alert, Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { FiArrowLeft, FiTrendingUp, FiUsers, FiBarChart2, FiCalendar, FiCheck } from 'react-icons/fi';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -45,6 +45,8 @@ const AnalyticsPage = () => {
   });
 
   const [selectedMachineId, setSelectedMachineId] = useState(null);
+  const [selectedComorbidity, setSelectedComorbidity] = useState(null);
+  const [showAllComorbidities, setShowAllComorbidities] = useState(false);
 
   const getAuthHeader = () => {
     const admin = JSON.parse(localStorage.getItem('admin'));
@@ -414,12 +416,17 @@ const AnalyticsPage = () => {
     };
 
     const comorbidityMap = {};
+    const comorbidityPatients = {};
     patients.forEach(patient => {
       if (patient.medicalHistory) {
         const history = patient.medicalHistory.toLowerCase();
         Object.entries(comorbidityKeywords).forEach(([condition, keywords]) => {
           if (keywords.some(keyword => history.includes(keyword))) {
             comorbidityMap[condition] = (comorbidityMap[condition] || 0) + 1;
+            if (!comorbidityPatients[condition]) {
+              comorbidityPatients[condition] = [];
+            }
+            comorbidityPatients[condition].push(patient);
           }
         });
       }
@@ -429,7 +436,8 @@ const AnalyticsPage = () => {
       .map(([condition, count]) => ({
         condition,
         count,
-        percentage: patients.length > 0 ? Math.round((count / patients.length) * 100) : 0
+        percentage: patients.length > 0 ? Math.round((count / patients.length) * 100) : 0,
+        patients: comorbidityPatients[condition] || []
       }))
       .sort((a, b) => b.count - a.count);
 
@@ -475,6 +483,10 @@ const AnalyticsPage = () => {
   useEffect(() => {
     calculateStats();
   }, [calculateStats]);
+
+  useEffect(() => {
+    setShowAllComorbidities(false);
+  }, [stats.comorbidities]);
 
   useEffect(() => {
     if (stats.machineUtilization.length > 0 && !selectedMachineId) {
@@ -741,24 +753,75 @@ const AnalyticsPage = () => {
                 <Card.Body>
                   <div className="comorbidity-list">
                     {stats.comorbidities.length > 0 ? (
-                      stats.comorbidities.map((comorbidity, index) => (
-                        <div key={comorbidity.condition} className="comorbidity-item">
-                          <div className="comorbidity-header">
-                            <span className="comorbidity-index">{index + 1}</span>
-                            <span className="comorbidity-name">{comorbidity.condition}</span>
-                            <span className="comorbidity-badge">{comorbidity.count} patients</span>
-                          </div>
-                          <div className="comorbidity-bar-container">
-                            <div className="comorbidity-bar">
-                              <div 
-                                className="comorbidity-bar-fill"
-                                style={{width: `${comorbidity.percentage}%`}}
-                              ></div>
+                      <>
+                        {stats.comorbidities.slice(0, showAllComorbidities ? undefined : 3).map((comorbidity, index) => (
+                          <div 
+                            key={comorbidity.condition} 
+                            className="comorbidity-item"
+                            onClick={() => setSelectedComorbidity(comorbidity)}
+                            style={{ cursor: 'pointer' }}
+                          >
+                            <div className="comorbidity-header">
+                              <span className="comorbidity-index">{index + 1}</span>
+                              <span className="comorbidity-name">{comorbidity.condition}</span>
+                              <span className="comorbidity-badge">{comorbidity.count} patients</span>
                             </div>
-                            <span className="comorbidity-percentage">{comorbidity.percentage}%</span>
+                            <div className="comorbidity-bar-container">
+                              <div className="comorbidity-bar">
+                                <div 
+                                  className="comorbidity-bar-fill"
+                                  style={{width: `${comorbidity.percentage}%`}}
+                                ></div>
+                              </div>
+                              <span className="comorbidity-percentage">{comorbidity.percentage}%</span>
+                            </div>
                           </div>
-                        </div>
-                      ))
+                        ))}
+                        {stats.comorbidities.length > 3 && !showAllComorbidities && (
+                          <button 
+                            onClick={() => setShowAllComorbidities(true)}
+                            style={{
+                              width: '100%',
+                              padding: '0.75rem',
+                              marginTop: '1rem',
+                              backgroundColor: '#2a3f9d',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '8px',
+                              cursor: 'pointer',
+                              fontSize: '0.95rem',
+                              fontWeight: '600',
+                              transition: 'all 0.3s ease'
+                            }}
+                            onMouseEnter={(e) => e.target.style.backgroundColor = '#1f2d6d'}
+                            onMouseLeave={(e) => e.target.style.backgroundColor = '#2a3f9d'}
+                          >
+                            See More ({stats.comorbidities.length - 3} more)
+                          </button>
+                        )}
+                        {showAllComorbidities && stats.comorbidities.length > 3 && (
+                          <button 
+                            onClick={() => setShowAllComorbidities(false)}
+                            style={{
+                              width: '100%',
+                              padding: '0.75rem',
+                              marginTop: '1rem',
+                              backgroundColor: '#718096',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '8px',
+                              cursor: 'pointer',
+                              fontSize: '0.95rem',
+                              fontWeight: '600',
+                              transition: 'all 0.3s ease'
+                            }}
+                            onMouseEnter={(e) => e.target.style.backgroundColor = '#4a5568'}
+                            onMouseLeave={(e) => e.target.style.backgroundColor = '#718096'}
+                          >
+                            Show Less
+                          </button>
+                        )}
+                      </>
                     ) : (
                       <p style={{textAlign: 'center', color: '#9ca3af', padding: '2rem'}}>No comorbidity data available</p>
                     )}
@@ -767,6 +830,68 @@ const AnalyticsPage = () => {
               </Card>
             </Col>
           </Row>
+
+          {selectedComorbidity && (
+            <Modal show={true} onHide={() => setSelectedComorbidity(null)} size="lg" centered>
+              <Modal.Header closeButton>
+                <Modal.Title>{selectedComorbidity.condition}</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <div style={{ marginBottom: '1rem' }}>
+                  <p style={{ color: '#718096', marginBottom: '0.5rem' }}>
+                    <strong>{selectedComorbidity.count} patients</strong> ({selectedComorbidity.percentage}% of total)
+                  </p>
+                </div>
+                <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
+                        <th style={{ padding: '0.75rem', textAlign: 'left', fontWeight: '600', color: '#1f2937' }}>Patient Name</th>
+                        <th style={{ padding: '0.75rem', textAlign: 'left', fontWeight: '600', color: '#1f2937' }}>Age</th>
+                        <th style={{ padding: '0.75rem', textAlign: 'left', fontWeight: '600', color: '#1f2937' }}>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedComorbidity.patients.map((patient) => (
+                        <tr key={patient._id} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                          <td style={{ padding: '0.75rem', color: '#374151' }}>{patient.name || 'N/A'}</td>
+                          <td style={{ padding: '0.75rem', color: '#374151' }}>{patient.age || 'N/A'}</td>
+                          <td style={{ padding: '0.75rem' }}>
+                            <span style={{
+                              padding: '0.25rem 0.75rem',
+                              borderRadius: '4px',
+                              fontSize: '0.85rem',
+                              fontWeight: '600',
+                              backgroundColor: patient.archived ? '#fee2e2' : '#dcfce7',
+                              color: patient.archived ? '#991b1b' : '#166534'
+                            }}>
+                              {patient.archived ? 'Inactive' : 'Active'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Modal.Body>
+              <Modal.Footer>
+                <button 
+                  onClick={() => setSelectedComorbidity(null)}
+                  style={{
+                    padding: '0.5rem 1.5rem',
+                    backgroundColor: '#e5e7eb',
+                    color: '#1f2937',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: '600'
+                  }}
+                >
+                  Close
+                </button>
+              </Modal.Footer>
+            </Modal>
+          )}
         </div>
 
         {/* Top 3 Referral Hospitals Section */}

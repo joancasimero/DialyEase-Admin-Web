@@ -148,6 +148,16 @@ const AppointmentSlotTracker = ({ authToken }) => {
       const response = await api.get(`/appointment-slots/date/${dateStr}`, {
         headers: { Authorization: `Bearer ${authToken}` }
       });
+      
+      // Debug: Check API response structure
+      if (response.data?.morning?.length > 0) {
+        console.log('📡 API Response - First 3 morning slots:', response.data.morning.slice(0, 3).map(s => ({
+          slotNum: s.slotNumber,
+          machine: s.machine,
+          machineType: typeof s.machine
+        })));
+      }
+      
       // If no slots exist, auto-initialize
       if (
         response.data &&
@@ -238,13 +248,39 @@ const AppointmentSlotTracker = ({ authToken }) => {
   // Sort slots by machine number (numerically)
   const sortSlotsByMachine = (slots) => {
     if (!Array.isArray(slots)) return slots;
-    return [...slots].sort((a, b) => {
-      const machineNameA = a.machine?.name || '';
-      const machineNameB = b.machine?.name || '';
+    
+    const sorted = [...slots].sort((a, b) => {
+      // Extract machine name from populated object or string
+      let machineNameA = '';
+      let machineNameB = '';
+      
+      if (typeof a.machine === 'object' && a.machine?.name) {
+        machineNameA = a.machine.name;
+      } else if (typeof a.machine === 'string') {
+        machineNameA = a.machine;
+      }
+      
+      if (typeof b.machine === 'object' && b.machine?.name) {
+        machineNameB = b.machine.name;
+      } else if (typeof b.machine === 'string') {
+        machineNameB = b.machine;
+      }
+      
       const numA = parseInt(machineNameA.replace(/\D/g, '')) || 0;
       const numB = parseInt(machineNameB.replace(/\D/g, '')) || 0;
+      
       return numA - numB;
     });
+    
+    // Debug log first 3 slots
+    if (sorted.length > 0) {
+      console.log('🔄 Sorted slots sample:', sorted.slice(0, 3).map(s => ({
+        slotNum: s.slotNumber,
+        machine: typeof s.machine === 'object' ? s.machine?.name : s.machine
+      })));
+    }
+    
+    return sorted;
   };
 
   const styles = {

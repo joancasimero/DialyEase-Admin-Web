@@ -182,18 +182,29 @@ const AnalyticsPage = () => {
 
     // Machine utilization calculation
     const todays = now.format('YYYY-MM-DD');
+    const getMachineId = (slot) => {
+      if (!slot?.machine) return null;
+      if (typeof slot.machine === 'string') return slot.machine;
+      return slot.machine._id || slot.machine.id || null;
+    };
+    const isOccupiedSlot = (slot) => {
+      return Boolean(slot?.isBooked || slot?.status === 'booked' || slot?.status === 'completed');
+    };
+
     const machineUtilization = machines.map(machine => {
       // Daily utilization
-      const dailyAppointments = appointments.filter(apt => 
-        apt.machine && apt.machine._id === machine._id && apt.date === todays && apt.isBooked
-      ).length;
+      const dailyAppointments = appointments.filter((apt) => {
+        const slotMachineId = getMachineId(apt);
+        return slotMachineId === machine._id && apt.date === todays && isOccupiedSlot(apt);
+      }).length;
       const dailyUtilization = (dailyAppointments / 30) * 100; // 30 slots per day (15 morning + 15 afternoon)
 
       // Monthly utilization
-      const monthlyAppointments = appointments.filter(apt => 
-        apt.machine && apt.machine._id === machine._id && 
-        moment(apt.date).isBetween(monthStart, monthEnd) && apt.isBooked
-      ).length;
+      const monthlyAppointments = appointments.filter((apt) => {
+        const slotMachineId = getMachineId(apt);
+        const inMonth = moment(apt.date, 'YYYY-MM-DD', true).isBetween(monthStart, monthEnd, undefined, '[]');
+        return slotMachineId === machine._id && inMonth && isOccupiedSlot(apt);
+      }).length;
       const monthlyUtilization = (monthlyAppointments / (30 * 30)) * 100; // ~30 days * 30 slots per day
 
       return {

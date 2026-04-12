@@ -908,6 +908,13 @@ const AnalyticsPage = () => {
                               <p className="stat-detail-value">{selectedMachine.monthlyAppointments}</p>
                             </div>
                           </div>
+                          <div className="stat-detail-item">
+                            <span className="stat-detail-icon">🎯</span>
+                            <div className="stat-detail-content">
+                              <p className="stat-detail-label">Average Per Day</p>
+                              <p className="stat-detail-value">{Math.round(selectedMachine.monthlyAppointments / 30)}</p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     ) : null;
@@ -982,28 +989,6 @@ const AnalyticsPage = () => {
                     <div 
                       className="adherence-bar-fill adherence-fill"
                       style={{width: `${stats.adherenceRate}%`}}
-                    ></div>
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
-
-            {/* Completion Rate */}
-            <Col lg={3} md={6} sm={12} className="adherence-col">
-              <Card className="adherence-card completion-card">
-                <Card.Body>
-                  <div className="adherence-header">
-                    <div className="adherence-icon completion-icon">
-                      🎯
-                    </div>
-                    <h3 className="adherence-card-title">Completion Rate</h3>
-                  </div>
-                  <p className="adherence-card-value">{stats.completionRate}%</p>
-                  <p className="adherence-card-description">Successfully completed sessions</p>
-                  <div className="adherence-bar">
-                    <div 
-                      className="adherence-bar-fill completion-fill"
-                      style={{width: `${stats.completionRate}%`}}
                     ></div>
                   </div>
                 </Card.Body>

@@ -852,24 +852,28 @@ const AnalyticsPage = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {selectedComorbidity.patients.map((patient) => (
-                        <tr key={patient._id} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                          <td style={{ padding: '0.75rem', color: '#374151' }}>{patient.name || 'N/A'}</td>
-                          <td style={{ padding: '0.75rem', color: '#374151' }}>{patient.age || 'N/A'}</td>
-                          <td style={{ padding: '0.75rem' }}>
-                            <span style={{
-                              padding: '0.25rem 0.75rem',
-                              borderRadius: '4px',
-                              fontSize: '0.85rem',
-                              fontWeight: '600',
-                              backgroundColor: patient.archived ? '#fee2e2' : '#dcfce7',
-                              color: patient.archived ? '#991b1b' : '#166534'
-                            }}>
-                              {patient.archived ? 'Inactive' : 'Active'}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
+                      {selectedComorbidity.patients.map((patient) => {
+                        const age = patient.birthday ? Math.floor(moment().diff(moment(patient.birthday), 'years')) : 'N/A';
+                        const fullName = `${patient.firstName || ''} ${patient.lastName || ''}`.trim() || 'N/A';
+                        return (
+                          <tr key={patient._id} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                            <td style={{ padding: '0.75rem', color: '#374151' }}>{fullName}</td>
+                            <td style={{ padding: '0.75rem', color: '#374151' }}>{age}</td>
+                            <td style={{ padding: '0.75rem' }}>
+                              <span style={{
+                                padding: '0.25rem 0.75rem',
+                                borderRadius: '4px',
+                                fontSize: '0.85rem',
+                                fontWeight: '600',
+                                backgroundColor: patient.archived ? '#fee2e2' : '#dcfce7',
+                                color: patient.archived ? '#991b1b' : '#166534'
+                              }}>
+                                {patient.archived ? 'Inactive' : 'Active'}
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>

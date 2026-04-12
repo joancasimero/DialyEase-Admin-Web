@@ -24,22 +24,73 @@ const AttendancePage = () => {
     return { Authorization: `Bearer ${token}` };
   };
 
+  const getPhilippineDateStr = (date = new Date()) => {
+    return date.toLocaleDateString('en-CA', { timeZone: 'Asia/Manila' });
+  };
+
   const fetchAttendance = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
+      const targetDate = selectedDate ? getPhilippineDateStr(selectedDate) : getPhilippineDateStr();
       const params = {};
-      if (selectedDate) {
-        params.date = selectedDate.toISOString().split('T')[0];
+      if (selectedDate || statusFilter === 'absent') {
+        params.date = targetDate;
       }
-      if (statusFilter !== 'all') {
+
+      if (statusFilter === 'present') {
         params.status = statusFilter;
       }
-      const res = await api.get('/attendance', {
-        headers: getAuthHeader(),
-        params
-      });
-      setAttendance(res.data);
+
+      const [attendanceRes, slotsRes] = await Promise.all([
+        api.get('/attendance', {
+          headers: getAuthHeader(),
+          params
+        }),
+        statusFilter === 'absent'
+          ? api.get(`/appointment-slots/date/${targetDate}`, {
+              headers: getAuthHeader()
+            })
+          : Promise.resolve({ data: null })
+      ]);
+
+      if (statusFilter === 'absent') {
+        const bookedSlots = [
+          ...(slotsRes.data?.morning || []),
+          ...(slotsRes.data?.afternoon || [])
+        ].filter(slot => slot.isBooked && slot.patient);
+
+        const presentPatientIds = new Set(
+          (attendanceRes.data || [])
+            .filter(record => record.status === 'present')
+            .map(record => record.patient?._id || record.patient?.id || record.patient)
+            .filter(Boolean)
+            .map(String)
+        );
+
+        const absentRows = bookedSlots
+          .filter(slot => {
+            const patientId = slot.patient?._id || slot.patient?.id;
+            return patientId && !presentPatientIds.has(String(patientId));
+          })
+          .map(slot => ({
+            _id: `absent-${slot._id}`,
+            patient: slot.patient,
+            date: targetDate,
+            status: 'absent',
+            time: null,
+            derived: true
+          }));
+
+        setAttendance(absentRows);
+        return;
+      }
+
+      if (statusFilter === 'present') {
+        setAttendance((attendanceRes.data || []).filter(record => record.status === 'present'));
+      } else {
+        setAttendance(attendanceRes.data || []);
+      }
     } catch (err) {
       setError('Failed to fetch attendance records');
     }

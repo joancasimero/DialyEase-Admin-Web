@@ -1099,8 +1099,7 @@ const AppointmentSlotTracker = ({ authToken }) => {
                         title={slot.isDisabled ? 'Disabled for booking' : (slot.isBooked ? `Booked by ${slot.patient?.firstName} ${slot.patient?.lastName}` : 'Available')}
                         onClick={() => { setActiveSlot(slot); setShowSlotModal(true); }}
                       >
-                        <div style={{ fontWeight: 600 }}>{slot.slotNumber}</div>
-                        <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>
+                        <div style={{ fontSize: '0.9rem', fontWeight: 600, marginBottom: '0.25rem' }}>
                           {slot.machine?.name || 'Machine N/A'}
                         </div>
                         <Badge 
@@ -1165,8 +1164,7 @@ const AppointmentSlotTracker = ({ authToken }) => {
                         title={slot.isDisabled ? 'Disabled for booking' : (slot.isBooked ? `Booked by ${slot.patient?.firstName} ${slot.patient?.lastName}` : 'Available')}
                         onClick={() => { setActiveSlot(slot); setShowSlotModal(true); }}
                       >
-                        <div style={{ fontWeight: 600 }}>{slot.slotNumber}</div>
-                        <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>
+                        <div style={{ fontSize: '0.9rem', fontWeight: 600, marginBottom: '0.25rem' }}>
                           {slot.machine?.name || 'Machine N/A'}
                         </div>
                         <Badge 

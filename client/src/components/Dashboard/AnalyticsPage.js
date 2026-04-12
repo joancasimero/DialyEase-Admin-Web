@@ -213,11 +213,6 @@ const AnalyticsPage = () => {
     const daysInMonth = now.daysInMonth();
     const avgAppointmentsPerDay = appointmentsThisMonth / daysInMonth;
 
-    // Occupancy rate (completed appointments vs total appointments)
-    const occupancyRate = appointments.length > 0 
-      ? Math.round((appointmentsCompleted / appointments.length) * 100) 
-      : 0;
-
     // Age demographics calculation
     const ageGroups = {
       '18-30': 0,
@@ -316,6 +311,12 @@ const AnalyticsPage = () => {
     console.log('  - Monthly by machine ID:', monthlyByMachineId.size, 'machines with monthly appointments');
     console.log('  - Daily map:', Object.fromEntries(dailyByMachineId));
     console.log('  - Monthly map:', Object.fromEntries(monthlyByMachineId));
+
+    // Calculate occupancy rate based on total capacity
+    // Total slots = machines × 2 slots per day (morning + afternoon) × days in month
+    const totalCapacity = machines.length > 0 ? machines.length * 2 * daysInMonth : 1;
+    const occupancyRate = totalCapacity > 0 ? Math.round((occupiedCount / totalCapacity) * 100) : 0;
+    console.log(`📊 Occupancy Rate: ${occupiedCount} occupied / ${totalCapacity} total capacity = ${occupancyRate}%`);
 
     const machineUtilization = machines.map(machine => {
       const machineId = normalizeId(machine._id);

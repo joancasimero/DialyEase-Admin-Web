@@ -158,6 +158,13 @@ const AttendancePage = () => {
     return `${hour12}:${minute} ${ampm}`;
   };
 
+  const formatDateToWords = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString + 'T00:00:00');
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString('en-US', options);
+  };
+
   const styles = {
     container: {
       padding: '3rem 2.5rem',
@@ -525,7 +532,7 @@ const AttendancePage = () => {
                         fontSize: '0.9rem',
                         fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif'
                       }}>
-                        {rec.date}
+                        {formatDateToWords(rec.date)}
                       </td>
                       <td style={{ padding: '1.25rem 1.5rem', textAlign: 'center' }}>
                         {rec.status === 'present' ? (

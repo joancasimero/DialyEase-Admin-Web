@@ -547,14 +547,10 @@ const AdminManagement = () => {
                   <thead>
                     <tr>
                       <th>Name</th>
-                      <th>Username</th>
-                      <th>Email</th>
                       <th>Position</th>
                       <th>Department</th>
                       <th>Role</th>
                       <th>Status</th>
-                      <th>Created Date</th>
-                      <th>Created By</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -572,8 +568,6 @@ const AdminManagement = () => {
                         <td>
                           {`${admin.firstName || ''} ${admin.middleName ? admin.middleName + ' ' : ''}${admin.lastName || ''}`}
                         </td>
-                        <td>{admin.username}</td>
-                        <td>{admin.email || 'N/A'}</td>
                         <td>{admin.position || 'N/A'}</td>
                         <td>{admin.department || 'N/A'}</td>
                         <td>
@@ -585,21 +579,6 @@ const AdminManagement = () => {
                           <span className={`admin-badge ${admin.isActive ? '' : 'archived'}`}>
                             {admin.isActive ? 'Active' : 'Archived'}
                           </span>
-                        </td>
-                        <td>
-                          {new Date(admin.createdAt).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })}
-                        </td>
-                        <td>
-                          {admin.createdBy ?
-                            `${admin.createdBy.firstName || ''} ${admin.createdBy.lastName || ''}`.trim() || admin.createdBy.username
-                            : 'System'
-                          }
                         </td>
                         <td>
                           {admin._id !== currentUser._id ? (

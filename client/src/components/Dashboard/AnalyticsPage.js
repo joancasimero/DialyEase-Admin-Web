@@ -218,21 +218,18 @@ const AnalyticsPage = () => {
     const todays = now.format('YYYY-MM-DD');
     const monthPrefix = now.format('YYYY-MM-');
     const normalizeId = (value) => (value === null || value === undefined ? null : String(value));
+    const normalizeMachineName = (value) => {
+      if (!value) return null;
+      return String(value).replace(/\s+/g, '').toLowerCase();
+    };
     const getMachineId = (slot) => {
       if (!slot?.machine) return null;
       if (typeof slot.machine === 'string') return normalizeId(slot.machine);
       return normalizeId(slot.machine._id || slot.machine.id);
     };
-    const machineMatchesSlot = (slot, machine) => {
-      const slotMachineId = getMachineId(slot);
-      const machineId = normalizeId(machine?._id);
-      if (slotMachineId && machineId && slotMachineId === machineId) {
-        return true;
-      }
-
-      // Fallback for datasets where populated refs are inconsistent but names are reliable.
-      const slotMachineName = typeof slot?.machine === 'object' ? slot.machine?.name : null;
-      return Boolean(slotMachineName && machine?.name && slotMachineName === machine.name);
+    const getMachineName = (slot) => {
+      if (!slot?.machine || typeof slot.machine !== 'object') return null;
+      return normalizeMachineName(slot.machine.name);
     };
     const isSameDay = (slotDate, dayStr) => {
       const normalizedDate = String(slotDate || '');
@@ -249,21 +246,54 @@ const AnalyticsPage = () => {
       return Boolean(slot?.isBooked || slot?.status === 'booked' || slot?.status === 'completed');
     };
 
+    const dailyByMachineId = new Map();
+    const dailyByMachineName = new Map();
+    const monthlyByMachineId = new Map();
+    const monthlyByMachineName = new Map();
+
+    appointments.forEach((apt) => {
+      if (!isOccupiedSlot(apt)) return;
+
+      const machineId = getMachineId(apt);
+      const machineName = getMachineName(apt);
+
+      if (isSameDay(apt.date, todays)) {
+        if (machineId) {
+          dailyByMachineId.set(machineId, (dailyByMachineId.get(machineId) || 0) + 1);
+        }
+        if (machineName) {
+          dailyByMachineName.set(machineName, (dailyByMachineName.get(machineName) || 0) + 1);
+        }
+      }
+
+      if (isInCurrentMonth(apt.date)) {
+        if (machineId) {
+          monthlyByMachineId.set(machineId, (monthlyByMachineId.get(machineId) || 0) + 1);
+        }
+        if (machineName) {
+          monthlyByMachineName.set(machineName, (monthlyByMachineName.get(machineName) || 0) + 1);
+        }
+      }
+    });
+
     const machineUtilization = machines.map(machine => {
-      // Daily utilization
-      const dailyAppointments = appointments.filter((apt) => {
-        return machineMatchesSlot(apt, machine) && isSameDay(apt.date, todays) && isOccupiedSlot(apt);
-      }).length;
+      const machineId = normalizeId(machine._id);
+      const machineName = normalizeMachineName(machine.name);
+
+      const dailyAppointments =
+        (machineId ? dailyByMachineId.get(machineId) : undefined) ||
+        (machineName ? dailyByMachineName.get(machineName) : undefined) ||
+        0;
       const dailyUtilization = (dailyAppointments / 30) * 100; // 30 slots per day (15 morning + 15 afternoon)
 
-      // Monthly utilization
-      const monthlyAppointments = appointments.filter((apt) => {
-        return machineMatchesSlot(apt, machine) && isInCurrentMonth(apt.date) && isOccupiedSlot(apt);
-      }).length;
+      const monthlyAppointments =
+        (machineId ? monthlyByMachineId.get(machineId) : undefined) ||
+        (machineName ? monthlyByMachineName.get(machineName) : undefined) ||
+        0;
       const monthlyUtilization = (monthlyAppointments / (30 * 30)) * 100; // ~30 days * 30 slots per day
 
       return {
-        _id: normalizeId(machine._id),
+        _id: machineId,
         name: machine.name,
         dailyUtilization: Math.round(dailyUtilization),
         monthlyUtilization: Math.round(monthlyUtilization),

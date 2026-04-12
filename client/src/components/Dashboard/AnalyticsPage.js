@@ -386,12 +386,12 @@ const AnalyticsPage = () => {
     const hospitalCounts = {};
     const hospitalPatients = {};
     patients.forEach(patient => {
-      if (patient.referredBy) {
-        hospitalCounts[patient.referredBy] = (hospitalCounts[patient.referredBy] || 0) + 1;
-        if (!hospitalPatients[patient.referredBy]) {
-          hospitalPatients[patient.referredBy] = [];
+      if (patient.hospital) {
+        hospitalCounts[patient.hospital] = (hospitalCounts[patient.hospital] || 0) + 1;
+        if (!hospitalPatients[patient.hospital]) {
+          hospitalPatients[patient.hospital] = [];
         }
-        hospitalPatients[patient.referredBy].push(patient);
+        hospitalPatients[patient.hospital].push(patient);
       }
     });
     const topHospitals = Object.entries(hospitalCounts)

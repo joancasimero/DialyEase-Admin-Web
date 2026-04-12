@@ -148,6 +148,16 @@ const AttendancePage = () => {
     setRefreshing(false);
   };
 
+  const convertTo12Hour = (militaryTime) => {
+    if (!militaryTime) return 'N/A';
+    const [hours, minutes] = militaryTime.split(':');
+    const hour = parseInt(hours);
+    const minute = minutes;
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const hour12 = hour % 12 || 12;
+    return `${hour12}:${minute} ${ampm}`;
+  };
+
   const styles = {
     container: {
       padding: '3rem 2.5rem',
@@ -553,7 +563,7 @@ const AttendancePage = () => {
                               <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2"/>
                               <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                             </svg>
-                            {rec.time}
+                            {convertTo12Hour(rec.time)}
                           </div>
                         ) : '-'}
                       </td>

@@ -49,6 +49,8 @@ const AnalyticsPage = () => {
   const [showAllComorbidities, setShowAllComorbidities] = useState(false);
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [showHospitalsListModal, setShowHospitalsListModal] = useState(false);
+  const [hospitalSearchTerm, setHospitalSearchTerm] = useState('');
+  const [hospitalSortOrder, setHospitalSortOrder] = useState('asc');
 
   const getAuthHeader = () => {
     const admin = JSON.parse(localStorage.getItem('admin'));
@@ -1069,69 +1071,125 @@ const AnalyticsPage = () => {
           )}
 
           {showHospitalsListModal && (
-            <Modal show={true} onHide={() => setShowHospitalsListModal(false)} size="lg" centered>
+            <Modal show={true} onHide={() => {setShowHospitalsListModal(false); setHospitalSearchTerm('');}} size="lg" centered>
               <Modal.Header closeButton>
                 <Modal.Title>All Referral Hospitals</Modal.Title>
               </Modal.Header>
               <Modal.Body>
+                <div style={{ marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem' }}>
+                    <input
+                      type="text"
+                      placeholder="Search hospitals..."
+                      value={hospitalSearchTerm}
+                      onChange={(e) => setHospitalSearchTerm(e.target.value)}
+                      style={{
+                        flex: 1,
+                        padding: '0.75rem',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '8px',
+                        fontSize: '0.95rem',
+                        fontFamily: 'inherit'
+                      }}
+                    />
+                    <button
+                      onClick={() => setHospitalSortOrder(hospitalSortOrder === 'asc' ? 'desc' : 'asc')}
+                      style={{
+                        padding: '0.75rem 1.5rem',
+                        backgroundColor: '#2a3f9d',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontWeight: '600',
+                        fontSize: '0.95rem',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseEnter={(e) => e.target.style.backgroundColor = '#1f2d6d'}
+                      onMouseLeave={(e) => e.target.style.backgroundColor = '#2a3f9d'}
+                    >
+                      {hospitalSortOrder === 'asc' ? 'A-Z' : 'Z-A'}
+                    </button>
+                  </div>
+                </div>
                 <div style={{ maxHeight: '500px', overflowY: 'auto', overflowX: 'hidden' }}>
-                  {stats.topHospitals && stats.topHospitals.length > 0 ? (
-                    <div>
-                      {stats.topHospitals.map((hospital, index) => (
-                        <div
-                          key={hospital.hospital}
-                          onClick={() => {
-                            setSelectedHospital(hospital);
-                            setShowHospitalsListModal(false);
-                          }}
-                          style={{
-                            padding: '1rem',
-                            marginBottom: '0.75rem',
-                            border: '1px solid #e5e7eb',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            transition: 'all 0.2s ease',
-                            backgroundColor: '#f9fafb'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = '#f0f4ff';
-                            e.currentTarget.style.borderColor = '#2a3f9d';
-                            e.currentTarget.style.transform = 'translateX(4px)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = '#f9fafb';
-                            e.currentTarget.style.borderColor = '#e5e7eb';
-                            e.currentTarget.style.transform = 'translateX(0)';
-                          }}
-                        >
-                          <div style={{ flex: 1 }}>
-                            <div style={{ fontWeight: '600', fontSize: '0.95rem', color: '#1f2937', marginBottom: '0.25rem' }}>
-                              {hospital.hospital}
+                  {stats.topHospitals && stats.topHospitals.length > 0 ? (() => {
+                    const filteredHospitals = stats.topHospitals.filter(hospital =>
+                      hospital.hospital.toLowerCase().includes(hospitalSearchTerm.toLowerCase())
+                    );
+                    
+                    const sortedHospitals = [...filteredHospitals].sort((a, b) => {
+                      if (hospitalSortOrder === 'asc') {
+                        return a.hospital.localeCompare(b.hospital);
+                      } else {
+                        return b.hospital.localeCompare(a.hospital);
+                      }
+                    });
+
+                    return (
+                      <div>
+                        {sortedHospitals.length > 0 ? (
+                          sortedHospitals.map((hospital, index) => (
+                            <div
+                              key={hospital.hospital}
+                              onClick={() => {
+                                setSelectedHospital(hospital);
+                                setShowHospitalsListModal(false);
+                              }}
+                              style={{
+                                padding: '1rem',
+                                marginBottom: '0.75rem',
+                                border: '1px solid #e5e7eb',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                transition: 'all 0.2s ease',
+                                backgroundColor: '#f9fafb'
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundColor = '#f0f4ff';
+                                e.currentTarget.style.borderColor = '#2a3f9d';
+                                e.currentTarget.style.transform = 'translateX(4px)';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundColor = '#f9fafb';
+                                e.currentTarget.style.borderColor = '#e5e7eb';
+                                e.currentTarget.style.transform = 'translateX(0)';
+                              }}
+                            >
+                              <div style={{ flex: 1 }}>
+                                <div style={{ fontWeight: '600', fontSize: '0.95rem', color: '#1f2937', marginBottom: '0.25rem' }}>
+                                  {hospital.hospital}
+                                </div>
+                              </div>
+                              <div style={{
+                                backgroundColor: '#f0f4ff',
+                                color: '#2a3f9d',
+                                borderRadius: '8px',
+                                width: '40px',
+                                height: '40px',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                fontWeight: '700',
+                                fontSize: '0.9rem',
+                                marginLeft: '1rem',
+                                flexShrink: 0
+                              }}>
+                                {hospital.count}
+                              </div>
                             </div>
-                          </div>
-                          <div style={{
-                            backgroundColor: '#f0f4ff',
-                            color: '#2a3f9d',
-                            borderRadius: '8px',
-                            width: '40px',
-                            height: '40px',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            fontWeight: '700',
-                            fontSize: '0.9rem',
-                            marginLeft: '1rem',
-                            flexShrink: 0
-                          }}>
-                            {hospital.count}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
+                          ))
+                        ) : (
+                          <p style={{ textAlign: 'center', color: '#9ca3af', padding: '2rem' }}>
+                            No hospitals found matching "{hospitalSearchTerm}"
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })() : (
                     <p style={{ textAlign: 'center', color: '#9ca3af', padding: '2rem' }}>
                       No hospitals available
                     </p>
@@ -1140,7 +1198,7 @@ const AnalyticsPage = () => {
               </Modal.Body>
               <Modal.Footer>
                 <button 
-                  onClick={() => setShowHospitalsListModal(false)}
+                  onClick={() => {setShowHospitalsListModal(false); setHospitalSearchTerm('');}}
                   style={{
                     padding: '0.5rem 1.5rem',
                     backgroundColor: '#e5e7eb',

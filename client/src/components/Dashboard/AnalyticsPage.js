@@ -47,6 +47,7 @@ const AnalyticsPage = () => {
   const [selectedMachineId, setSelectedMachineId] = useState(null);
   const [selectedComorbidity, setSelectedComorbidity] = useState(null);
   const [showAllComorbidities, setShowAllComorbidities] = useState(false);
+  const [selectedHospital, setSelectedHospital] = useState(null);
 
   const getAuthHeader = () => {
     const admin = JSON.parse(localStorage.getItem('admin'));
@@ -381,16 +382,22 @@ const AnalyticsPage = () => {
 
     // Top 3 referral hospitals
     const hospitalCounts = {};
+    const hospitalPatients = {};
     patients.forEach(patient => {
       if (patient.hospital) {
         hospitalCounts[patient.hospital] = (hospitalCounts[patient.hospital] || 0) + 1;
+        if (!hospitalPatients[patient.hospital]) {
+          hospitalPatients[patient.hospital] = [];
+        }
+        hospitalPatients[patient.hospital].push(patient);
       }
     });
     const topHospitals = Object.entries(hospitalCounts)
       .map(([hospital, count]) => ({
         hospital,
         count,
-        percentage: patients.length > 0 ? Math.round((count / patients.length) * 100) : 0
+        percentage: patients.length > 0 ? Math.round((count / patients.length) * 100) : 0,
+        patients: hospitalPatients[hospital] || []
       }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 3);
@@ -918,7 +925,19 @@ const AnalyticsPage = () => {
             {stats.topHospitals.length > 0 ? (
               stats.topHospitals.map((hospital, index) => (
                 <Col lg={4} md={6} sm={12} key={hospital.hospital} className="hospital-col">
-                  <Card className="hospital-card">
+                  <Card 
+                    className="hospital-card"
+                    onClick={() => setSelectedHospital(hospital)}
+                    style={{ cursor: 'pointer', transition: 'all 0.3s ease' }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-4px)';
+                      e.currentTarget.style.boxShadow = '0 8px 20px rgba(42, 63, 157, 0.2)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
                     <Card.Body>
                       <div className="hospital-rank">
                         <span className={`rank-badge rank-${index + 1}`}>{index + 1}</span>
@@ -951,6 +970,80 @@ const AnalyticsPage = () => {
               </Col>
             )}
           </Row>
+
+          {selectedHospital && (
+            <Modal show={true} onHide={() => setSelectedHospital(null)} size="lg" centered>
+              <Modal.Header closeButton>
+                <Modal.Title>{selectedHospital.hospital}</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <div style={{ marginBottom: '1rem' }}>
+                  <p style={{ color: '#718096', marginBottom: '0.5rem' }}>
+                    <strong>{selectedHospital.count} patients</strong> ({selectedHospital.percentage}% of total)
+                  </p>
+                </div>
+                <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                  {selectedHospital.patients && selectedHospital.patients.length > 0 ? (
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                      <thead>
+                        <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
+                          <th style={{ padding: '0.75rem', textAlign: 'left', fontWeight: '600', color: '#1f2937' }}>Patient Name</th>
+                          <th style={{ padding: '0.75rem', textAlign: 'left', fontWeight: '600', color: '#1f2937' }}>Age</th>
+                          <th style={{ padding: '0.75rem', textAlign: 'left', fontWeight: '600', color: '#1f2937' }}>Gender</th>
+                          <th style={{ padding: '0.75rem', textAlign: 'left', fontWeight: '600', color: '#1f2937' }}>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedHospital.patients.map((patient) => {
+                          const age = patient.birthday ? Math.floor(moment().diff(moment(patient.birthday), 'years')) : 'N/A';
+                          const fullName = `${patient.firstName || ''} ${patient.lastName || ''}`.trim() || 'N/A';
+                          return (
+                            <tr key={patient._id} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                              <td style={{ padding: '0.75rem', color: '#374151' }}>{fullName}</td>
+                              <td style={{ padding: '0.75rem', color: '#374151' }}>{age}</td>
+                              <td style={{ padding: '0.75rem', color: '#374151' }}>{patient.gender || 'N/A'}</td>
+                              <td style={{ padding: '0.75rem' }}>
+                                <span style={{
+                                  padding: '0.25rem 0.75rem',
+                                  borderRadius: '4px',
+                                  fontSize: '0.85rem',
+                                  fontWeight: '600',
+                                  backgroundColor: patient.archived ? '#fee2e2' : '#dcfce7',
+                                  color: patient.archived ? '#991b1b' : '#166534'
+                                }}>
+                                  {patient.archived ? 'Inactive' : 'Active'}
+                                </span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <p style={{ textAlign: 'center', color: '#9ca3af', padding: '1rem' }}>
+                      No patient data available for this hospital
+                    </p>
+                  )}
+                </div>
+              </Modal.Body>
+              <Modal.Footer>
+                <button 
+                  onClick={() => setSelectedHospital(null)}
+                  style={{
+                    padding: '0.5rem 1.5rem',
+                    backgroundColor: '#e5e7eb',
+                    color: '#1f2937',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: '600'
+                  }}
+                >
+                  Close
+                </button>
+              </Modal.Footer>
+            </Modal>
+          )}
         </div>
 
         {/* Machine Utilization Section */}

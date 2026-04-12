@@ -83,6 +83,8 @@ const AnalyticsPage = () => {
       const now = moment().tz('Asia/Manila');
       let appointmentSlots = [];
 
+      console.log('📅 Fetching appointments for month:', now.format('YYYY-MM'), '(M=', now.format('M'), ')');
+
       try {
         const res = await api.get('/appointment-slots', {
           headers: getAuthHeader(),
@@ -92,12 +94,14 @@ const AnalyticsPage = () => {
           }
         });
         appointmentSlots = Array.isArray(res.data) ? res.data : [];
+        console.log('✅ Primary bulk endpoint returned', appointmentSlots.length, 'slots');
       } catch (primaryErr) {
         console.warn('Primary monthly slot endpoint failed, falling back to per-date fetch:', primaryErr);
       }
 
       // Fallback: use the same date endpoint powering Slot Tracker so analytics matches tracker data.
       if (appointmentSlots.length === 0) {
+        console.log('⚠️ Bulk endpoint empty, using per-date fallback...');
         const daysInMonth = now.daysInMonth();
         const dateRequests = [];
 
@@ -118,10 +122,17 @@ const AnalyticsPage = () => {
           }
 
           const payload = result.value?.data || {};
-          return [...(payload.morning || []), ...(payload.afternoon || [])];
+          const morning = payload.morning || [];
+          const afternoon = payload.afternoon || [];
+          console.log('📊 Date fetch returned', morning.length + afternoon.length, 'slots for', payload.date);
+          return [...morning, ...afternoon];
         });
       }
 
+      console.log('🎯 Total appointments fetched:', appointmentSlots.length);
+      if (appointmentSlots.length > 0) {
+        console.log('📌 Sample slot:', appointmentSlots[0]);
+      }
       setAppointments(appointmentSlots);
     } catch (err) {
       console.error('Error fetching appointments:', err);
@@ -251,9 +262,16 @@ const AnalyticsPage = () => {
     const monthlyByMachineId = new Map();
     const monthlyByMachineName = new Map();
 
-    appointments.forEach((apt) => {
-      if (!isOccupiedSlot(apt)) return;
+    let occupiedCount = 0;
+    let notOccupiedCount = 0;
 
+    appointments.forEach((apt) => {
+      if (!isOccupiedSlot(apt)) {
+        notOccupiedCount++;
+        return;
+      }
+
+      occupiedCount++;
       const machineId = getMachineId(apt);
       const machineName = getMachineName(apt);
 
@@ -276,6 +294,14 @@ const AnalyticsPage = () => {
       }
     });
 
+    console.log('🔢 Appointments aggregation:');
+    console.log('  - Occupied slots (booked/completed):', occupiedCount);
+    console.log('  - Non-occupied slots:', notOccupiedCount);
+    console.log('  - Daily by machine ID:', dailyByMachineId.size, 'machines with daily appointments');
+    console.log('  - Monthly by machine ID:', monthlyByMachineId.size, 'machines with monthly appointments');
+    console.log('  - Daily map:', Object.fromEntries(dailyByMachineId));
+    console.log('  - Monthly map:', Object.fromEntries(monthlyByMachineId));
+
     const machineUtilization = machines.map(machine => {
       const machineId = normalizeId(machine._id);
       const machineName = normalizeMachineName(machine.name);
@@ -292,7 +318,7 @@ const AnalyticsPage = () => {
         0;
       const monthlyUtilization = (monthlyAppointments / (30 * 30)) * 100; // ~30 days * 30 slots per day
 
-      return {
+      const util = {
         _id: machineId,
         name: machine.name,
         dailyUtilization: Math.round(dailyUtilization),
@@ -301,6 +327,12 @@ const AnalyticsPage = () => {
         monthlyAppointments,
         isActive: machine.isActive
       };
+
+      if (monthlyAppointments > 0) {
+        console.log(`📊 ${machine.name}: ${monthlyAppointments} monthly appointments = ${util.monthlyUtilization}%`);
+      }
+
+      return util;
     }).sort((a, b) => {
       const numA = parseInt(a.name.replace(/\D/g, '')) || 0;
       const numB = parseInt(b.name.replace(/\D/g, '')) || 0;

@@ -13,6 +13,7 @@ const AttendancePage = () => {
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(null);
   const [statusFilter, setStatusFilter] = useState('all');
+  const [machineFilter, setMachineFilter] = useState('all');
   const [error, setError] = useState('');
   const [refreshing, setRefreshing] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
@@ -264,7 +265,7 @@ const AttendancePage = () => {
         <Card style={styles.card}>
           <div style={styles.filterSection}>
             <Row className="g-3 align-items-end">
-              <Col md={5}>
+              <Col md={4}>
                 <div>
                   <label style={{ ...styles.filterLabel, display: 'block', marginBottom: '0.5rem' }}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: '0.5rem', verticalAlign: 'middle' }}>
@@ -291,7 +292,7 @@ const AttendancePage = () => {
                   />
                 </div>
               </Col>
-              <Col md={4}>
+              <Col md={3}>
                 <div>
                   <label style={{ ...styles.filterLabel, display: 'block', marginBottom: '0.5rem' }}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: '0.5rem', verticalAlign: 'middle' }}>
@@ -319,14 +320,44 @@ const AttendancePage = () => {
                 </div>
               </Col>
               <Col md={3}>
-                <div style={{ display: 'flex', gap: '0.75rem' }}>
+                <div>
+                  <label style={{ ...styles.filterLabel, display: 'block', marginBottom: '0.5rem' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: '0.5rem', verticalAlign: 'middle' }}>
+                      <rect x="3" y="4" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M3 8h18M8 4v3M16 4v3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    Machine Filter
+                  </label>
+                  <Form.Select
+                    value={machineFilter}
+                    onChange={e => setMachineFilter(e.target.value)}
+                    style={{
+                      borderRadius: '10px',
+                      border: '2px solid rgba(42, 63, 157, 0.2)',
+                      padding: '0.75rem 1rem',
+                      fontSize: '0.95rem',
+                      fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif',
+                      fontWeight: 600
+                    }}
+                  >
+                    <option value="all">All Machines</option>
+                    {machines.map(machine => (
+                      <option key={machine._id} value={machine._id}>
+                        {machine.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </div>
+              </Col>
+              <Col md={2}>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
                   <Button 
                     style={{
                       flex: 1,
                       borderRadius: '10px',
                       fontWeight: 700,
-                      fontSize: '0.85rem',
-                      padding: '0.75rem 1rem',
+                      fontSize: '0.75rem',
+                      padding: '0.6rem 0.5rem',
                       fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif',
                       border: 'none',
                       background: 'linear-gradient(135deg, #2a3f9d 0%, #4a6cf7 100%)',
@@ -335,7 +366,7 @@ const AttendancePage = () => {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '0.5rem'
+                      gap: '0.3rem'
                     }}
                     onClick={handleRefresh} 
                     disabled={refreshing}
@@ -348,7 +379,7 @@ const AttendancePage = () => {
                       e.currentTarget.style.boxShadow = '0 2px 8px rgba(42, 63, 157, 0.2)';
                     }}
                   >
-                    <FiRefreshCw style={{ fontSize: '0.95rem' }} className={refreshing ? 'spin' : ''} />
+                    <FiRefreshCw style={{ fontSize: '0.8rem' }} className={refreshing ? 'spin' : ''} />
                     <span>Refresh</span>
                   </Button>
                   <Button
@@ -356,8 +387,8 @@ const AttendancePage = () => {
                       flex: 1,
                       borderRadius: '10px',
                       fontWeight: 700,
-                      fontSize: '0.85rem',
-                      padding: '0.75rem 1rem',
+                      fontSize: '0.75rem',
+                      padding: '0.6rem 0.5rem',
                       fontFamily: 'Inter Tight, Inter, Segoe UI, sans-serif',
                       border: 'none',
                       background: 'linear-gradient(135deg, #64748b 0%, #475569 100%)',
@@ -366,7 +397,7 @@ const AttendancePage = () => {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '0.5rem'
+                      gap: '0.3rem'
                     }}
                     onClick={() => setShowExportModal(true)}
                     onMouseEnter={(e) => {
@@ -378,7 +409,7 @@ const AttendancePage = () => {
                       e.currentTarget.style.boxShadow = '0 2px 8px rgba(100, 116, 139, 0.2)';
                     }}
                   >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                     <span>Export</span>
@@ -468,7 +499,13 @@ const AttendancePage = () => {
                     </td>
                   </tr>
                 ) : (
-                  attendance.map((rec, idx) => (
+                  attendance
+                    .filter(rec => {
+                      if (machineFilter === 'all') return true;
+                      const machineId = rec.patient?.assignedMachine?._id || rec.patient?.assignedMachine;
+                      return machineId === machineFilter;
+                    })
+                    .map((rec, idx) => (
                     <tr 
                       key={rec._id || idx} 
                       style={{ 

@@ -341,7 +341,11 @@ const AttendancePage = () => {
                     }}
                   >
                     <option value="all">All Machines</option>
-                    {machines.map(machine => (
+                    {[...machines].sort((a, b) => {
+                      const numA = parseInt(a.name.replace(/\D/g, '')) || 0;
+                      const numB = parseInt(b.name.replace(/\D/g, '')) || 0;
+                      return numA - numB;
+                    }).map(machine => (
                       <option key={machine._id} value={machine._id}>
                         {machine.name}
                       </option>

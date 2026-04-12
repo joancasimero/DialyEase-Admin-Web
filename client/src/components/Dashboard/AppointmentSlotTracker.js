@@ -235,6 +235,19 @@ const AppointmentSlotTracker = ({ authToken }) => {
     setShowDetailModal(true);
   };
 
+  // Sort slots by machine number (numerically)
+  const sortSlotsByMachine = (slots) => {
+    if (!Array.isArray(slots)) return slots;
+    return [...slots].sort((a, b) => {
+      const machineNameA = a.machine?.name || '';
+      const machineNameB = b.machine?.name || '';
+      const numA = parseInt(machineNameA.replace(/\D/g, '')) || 0;
+      const numB = parseInt(machineNameB.replace(/\D/g, '')) || 0;
+      return numA - numB;
+    });
+  };
+  };
+
   const styles = {
     card: {
       border: 'none',
@@ -1038,7 +1051,7 @@ const AppointmentSlotTracker = ({ authToken }) => {
                 </div>
                 {slotData && slotData.morning ? (
                   <div style={styles.slotGrid}>
-                    {slotData.morning.map((slot) => (
+                    {sortSlotsByMachine(slotData.morning).map((slot) => (
                       <div
                         key={`morning-${slot.slotNumber}`}
                         style={{
@@ -1104,7 +1117,7 @@ const AppointmentSlotTracker = ({ authToken }) => {
                 </div>
                 {slotData && slotData.afternoon ? (
                   <div style={styles.slotGrid}>
-                    {slotData.afternoon.map((slot) => (
+                    {sortSlotsByMachine(slotData.afternoon).map((slot) => (
                       <div
                         key={`afternoon-${slot.slotNumber}`}
                         style={{
@@ -1158,7 +1171,7 @@ const AppointmentSlotTracker = ({ authToken }) => {
                 </tr>
               </thead>
               <tbody>
-                {slotData[selectedTimeSlot]?.map((slot) => (
+                {sortSlotsByMachine(slotData[selectedTimeSlot])?.map((slot) => (
                   <tr key={slot.slotNumber} style={slot.isDisabled ? { backgroundColor: '#f3f4f6', opacity: 0.7 } : {}}>
                     <td style={{ fontWeight: 600 }}>{slot.slotNumber}</td>
                     <td>{slot.machine?.name || 'N/A'}</td>

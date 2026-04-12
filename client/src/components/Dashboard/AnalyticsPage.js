@@ -1036,6 +1036,7 @@ const AnalyticsPage = () => {
                           <th style={{ padding: '0.75rem', textAlign: 'left', fontWeight: '600', color: '#1f2937' }}>Patient Name</th>
                           <th style={{ padding: '0.75rem', textAlign: 'left', fontWeight: '600', color: '#1f2937' }}>Age</th>
                           <th style={{ padding: '0.75rem', textAlign: 'left', fontWeight: '600', color: '#1f2937' }}>Gender</th>
+                          <th style={{ padding: '0.75rem', textAlign: 'left', fontWeight: '600', color: '#1f2937' }}>Machine</th>
                           <th style={{ padding: '0.75rem', textAlign: 'left', fontWeight: '600', color: '#1f2937' }}>Status</th>
                         </tr>
                       </thead>
@@ -1043,11 +1044,15 @@ const AnalyticsPage = () => {
                         {selectedHospital.patients.map((patient) => {
                           const age = patient.birthday ? Math.floor(moment().diff(moment(patient.birthday), 'years')) : 'N/A';
                           const fullName = `${patient.firstName || ''} ${patient.lastName || ''}`.trim() || 'N/A';
+                          const machineId = patient.assignedMachine?._id || patient.assignedMachine;
+                          const machine = machines.find(m => m._id === machineId);
+                          const machineName = machine ? machine.name : (machineId ? `Machine ${machineId.slice(-4)}` : 'N/A');
                           return (
                             <tr key={patient._id} style={{ borderBottom: '1px solid #f3f4f6' }}>
                               <td style={{ padding: '0.75rem', color: '#374151' }}>{fullName}</td>
                               <td style={{ padding: '0.75rem', color: '#374151' }}>{age}</td>
                               <td style={{ padding: '0.75rem', color: '#374151' }}>{patient.gender || 'N/A'}</td>
+                              <td style={{ padding: '0.75rem', color: '#374151', fontWeight: '600' }}>{machineName}</td>
                               <td style={{ padding: '0.75rem' }}>
                                 <span style={{
                                   padding: '0.25rem 0.75rem',

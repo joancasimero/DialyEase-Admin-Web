@@ -75,13 +75,13 @@ router.post('/reschedule-requests/:id/approve', protect, async (req, res) => {
       // Don't fail the approval just because notification failed
     }
 
-    // Find an available afternoon slot for the requested date
+    // Find an available afternoon slot for the requested date (prioritize machine 1)
     const slot = await AppointmentSlot.findOne({
       date: request.requestedDate,
       timeSlot: 'afternoon',
       isBooked: false,
       isDisabled: { $ne: true }
-    });
+    }).sort({ slotNumber: 1 });
 
     if (!slot) {
       return res.json({

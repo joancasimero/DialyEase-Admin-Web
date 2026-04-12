@@ -266,8 +266,8 @@ router.post('/initialize-slots', protect, async (req, res) => {
       return res.status(400).json({ message: 'Slots already initialized for this date' });
     }
 
-    // Get all active machines
-    const machines = await Machine.find({ isActive: true }).limit(15);
+    // Get all active machines, sorted by name to ensure slot number matches machine number
+    const machines = await Machine.find({ isActive: true }).sort({ name: 1 }).limit(15);
     if (machines.length < 15) {
       return res.status(400).json({ 
         message: `Need 15 active machines, but only ${machines.length} found` 

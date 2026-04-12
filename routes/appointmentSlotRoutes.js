@@ -207,16 +207,23 @@ router.post('/:id/toggle-disable', protect, async (req, res) => {
 router.get('/', protect, async (req, res) => {
   try {
     const { date, month, year } = req.query;
-    const filter = {};
+    let filter = {};
 
     if (date) {
       filter.date = date;
     } else if (month && year) {
-      const monthStr = month.toString().padStart(2, '0');
-      filter.date = { $regex: `^${year}-${monthStr}-` };
+      // Use date range instead of regex to handle all date formats
+      const monthNum = parseInt(month);
+      const yearNum = parseInt(year);
+      
+      // Create start and end dates for the month
+      const startDate = `${yearNum}-${String(monthNum).padStart(2, '0')}-01`;
+      const endDate = `${yearNum}-${String(monthNum).padStart(2, '0')}-31`;
+      
+      filter.date = { $gte: startDate, $lte: endDate };
+      
+      console.log(`🔍 Fetching slots with date range: ${startDate} to ${endDate}`);
     }
-
-    console.log('🔍 Fetching slots with filter:', JSON.stringify(filter));
 
     const slots = await AppointmentSlot.find(filter)
       .populate('machine', 'name isActive')
@@ -226,6 +233,8 @@ router.get('/', protect, async (req, res) => {
     console.log(`✅ Found ${slots.length} slots matching filter`);
     
     if (slots.length > 0) {
+      const bookedCount = slots.filter(s => s.isBooked).length;
+      console.log(`📊 Booked: ${bookedCount}, Available: ${slots.length - bookedCount}`);
       console.log('📌 Sample slots:', slots.slice(0, 3).map(s => ({
         date: s.date,
         machine: s.machine?.name,

@@ -82,10 +82,12 @@ const AnalyticsPage = () => {
     try {
       const now = moment().tz('Asia/Manila');
       let appointmentSlots = [];
+      let fetchMethod = 'none';
 
       console.log('📅 Fetching appointments for month:', now.format('YYYY-MM'), '(M=', now.format('M'), ')');
 
       try {
+        console.log('🔄 Trying bulk endpoint with month params...');
         const res = await api.get('/appointment-slots', {
           headers: getAuthHeader(),
           params: {
@@ -94,14 +96,17 @@ const AnalyticsPage = () => {
           }
         });
         appointmentSlots = Array.isArray(res.data) ? res.data : [];
-        console.log('✅ Primary bulk endpoint returned', appointmentSlots.length, 'slots');
+        fetchMethod = 'bulk';
+        
+        const bookedCount = appointmentSlots.filter(apt => apt.isBooked).length;
+        console.log(`✅ Bulk endpoint returned ${appointmentSlots.length} slots (${bookedCount} booked)`);
       } catch (primaryErr) {
-        console.warn('Primary monthly slot endpoint failed, falling back to per-date fetch:', primaryErr);
+        console.warn('❌ Primary bulk endpoint failed:', primaryErr.message);
       }
 
       // Fallback: use the same date endpoint powering Slot Tracker so analytics matches tracker data.
-      if (appointmentSlots.length === 0) {
-        console.log('⚠️ Bulk endpoint empty, using per-date fallback...');
+      if (appointmentSlots.length === 0 || appointmentSlots.filter(apt => apt.isBooked).length === 0) {
+        console.log('⚠️ No booked slots from bulk endpoint, using per-date fallback (like Slot Tracker)...');
         const daysInMonth = now.daysInMonth();
         const dateRequests = [];
 
@@ -124,15 +129,25 @@ const AnalyticsPage = () => {
           const payload = result.value?.data || {};
           const morning = payload.morning || [];
           const afternoon = payload.afternoon || [];
-          console.log('📊 Date fetch returned', morning.length + afternoon.length, 'slots for', payload.date);
           return [...morning, ...afternoon];
         });
+        
+        fetchMethod = 'per-date';
+        const bookedCount = appointmentSlots.filter(apt => apt.isBooked).length;
+        console.log(`✅ Per-date fallback returned ${appointmentSlots.length} total slots (${bookedCount} booked)`);
       }
 
-      console.log('🎯 Total appointments fetched:', appointmentSlots.length);
+      console.log(`🎯 Total appointments fetched (${fetchMethod}):`, appointmentSlots.length);
       if (appointmentSlots.length > 0) {
-        console.log('📌 Sample slot:', appointmentSlots[0]);
+        const booked = appointmentSlots.filter(apt => apt.isBooked);
+        console.log(`📌 Sample booked slots:`, booked.slice(0, 3).map(apt => ({
+          date: apt.date,
+          machine: apt.machine?.name,
+          patient: apt.patient?.firstName,
+          status: apt.status
+        })));
       }
+      
       setAppointments(appointmentSlots);
     } catch (err) {
       console.error('Error fetching appointments:', err);

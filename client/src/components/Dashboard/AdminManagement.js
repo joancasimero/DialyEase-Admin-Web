@@ -18,12 +18,11 @@ const getRoleBadgeVariant = (role) => {
 };
 
 const AdminManagement = () => {
-  const { currentUser, authToken, isSuperAdmin } = useAuth();
+  const { currentUser, authToken, isSuperAdmin, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [creating, setCreating] = useState(false);
-  const [isInitialized, setIsInitialized] = useState(false);
   const [showArchived, setShowArchived] = useState(false);
   const [activeAdmins, setActiveAdmins] = useState([]);
   const [archivedAdmins, setArchivedAdmins] = useState([]);
@@ -195,19 +194,19 @@ const AdminManagement = () => {
   }, [authToken]);
 
   useEffect(() => {
-    // Wait for auth context to initialize
-    if (currentUser !== null) {
-      setIsInitialized(true);
-      if (isSuperAdmin && authToken) {
-        fetchAdmins();
-      } else if (!isSuperAdmin) {
-        setLoading(false); // Stop loading if not super admin
-      }
+    if (authLoading) {
+      return;
     }
-  }, [currentUser, isSuperAdmin, authToken, fetchAdmins]);
+
+    if (isSuperAdmin && authToken) {
+      fetchAdmins();
+    } else {
+      setLoading(false);
+    }
+  }, [authLoading, isSuperAdmin, authToken, fetchAdmins]);
 
   // Show loading while auth is initializing
-  if (!isInitialized) {
+  if (authLoading) {
     return (
       <div className="admin-management-page">
         <Container className="admin-management-container">

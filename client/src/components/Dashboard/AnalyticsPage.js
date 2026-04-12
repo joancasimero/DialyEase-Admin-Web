@@ -28,7 +28,6 @@ const AnalyticsPage = () => {
     occupancyRate: 0,
     noShowRate: 0,
     cancellationRate: 0,
-    completionRate: 0,
     adherenceRate: 0,
     machineAvailability: 0,
     appointmentsCancelled: 0,
@@ -224,7 +223,6 @@ const AnalyticsPage = () => {
     
     const noShowRate = totalAttendance > 0 ? Math.round((noShowCount / totalAttendance) * 100) : 0;
     const cancellationRate = appointmentsThisMonth > 0 ? Math.round((appointmentsCancelled / appointmentsThisMonth) * 100) : 0;
-    const completionRate = appointments.length > 0 ? Math.round((appointmentsCompleted / appointments.length) * 100) : 0;
     const adherenceRate = totalAttendance > 0 ? Math.round((presentCount / totalAttendance) * 100) : 0;
     const machineAvailability = machines.length > 0 ? Math.round((machines.filter(m => m.isActive).length / machines.length) * 100) : 0;
 
@@ -449,7 +447,6 @@ const AnalyticsPage = () => {
       occupancyRate,
       noShowRate,
       cancellationRate,
-      completionRate,
       adherenceRate,
       machineAvailability,
       ageGroups,

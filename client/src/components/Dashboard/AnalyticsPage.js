@@ -1111,9 +1111,6 @@ const AnalyticsPage = () => {
                             <div style={{ fontWeight: '600', fontSize: '0.95rem', color: '#1f2937', marginBottom: '0.25rem' }}>
                               {hospital.hospital}
                             </div>
-                            <div style={{ fontSize: '0.85rem', color: '#6b7280' }}>
-                              {hospital.percentage}% of total patients
-                            </div>
                           </div>
                           <div style={{
                             backgroundColor: '#2a3f9d',

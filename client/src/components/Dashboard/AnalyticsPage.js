@@ -186,17 +186,36 @@ const AnalyticsPage = () => {
       return aptDate.isBetween(monthStart, monthEnd);
     }).length;
 
+    const completedThisMonth = appointments.filter(apt => {
+      const aptDate = moment(apt.date);
+      return apt.status === 'completed' && aptDate.isBetween(monthStart, monthEnd);
+    }).length;
+
+    const pendingThisMonth = appointments.filter(apt => {
+      const aptDate = moment(apt.date);
+      return (apt.status === 'booked' || apt.status === 'pending' || apt.status === 'scheduled') && 
+             aptDate.isBetween(monthStart, monthEnd);
+    }).length;
+
     const appointmentsCompleted = appointments.filter(apt => {
       return apt.status === 'completed';
     }).length;
 
     const appointmentsPending = appointments.filter(apt => {
-      return apt.status === 'pending' || apt.status === 'scheduled';
+      return apt.status === 'booked' || apt.status === 'pending' || apt.status === 'scheduled';
     }).length;
 
     const appointmentsCancelled = appointments.filter(apt => {
       return apt.status === 'cancelled';
     }).length;
+
+    console.log('📅 Appointment Status Breakdown:');
+    console.log('  - Total appointments:', appointments.length);
+    console.log('  - Completed:', appointmentsCompleted);
+    console.log('  - Pending/Booked:', appointmentsPending);
+    console.log('  - Cancelled:', appointmentsCancelled);
+    console.log('  - This month - Completed:', completedThisMonth, 'Pending:', pendingThisMonth);
+    console.log('  - Sample appointments:', appointments.slice(0, 3).map(apt => ({ date: apt.date, status: apt.status })));
 
     // Dialysis frequency and adherence metrics
     const noShowCount = attendance.filter(att => att.status === 'absent').length;
@@ -423,8 +442,8 @@ const AnalyticsPage = () => {
       inactivePatients,
       totalMachines: machines.length,
       appointmentsThisMonth,
-      appointmentsCompleted,
-      appointmentsPending,
+      appointmentsCompleted: completedThisMonth,
+      appointmentsPending: pendingThisMonth,
       appointmentsCancelled,
       avgAppointmentsPerDay: avgAppointmentsPerDay.toFixed(1),
       occupancyRate,
